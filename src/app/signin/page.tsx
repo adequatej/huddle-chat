@@ -27,13 +27,15 @@ export default async function SignInPage(props: SignInPageProps) {
             alt="Huddle Chat Logo"
             width={128}
             height={128}
-            className="m-auto"
+            className="m-auto invert dark:invert-0"
           />
           <CardTitle className="text-2xl font-bold">Huddle Chat</CardTitle>
-          <CardDescription>Sign in to Huddle Chat.</CardDescription>
-          <Separator />
+          <CardDescription className="text-foreground">
+            Sign in to Huddle Chat.
+          </CardDescription>
+          <Separator className="" />
         </CardHeader>
-        <CardContent className="flex flex-col items-center gap-4">
+        <CardContent className="flex flex-col items-center gap-4 pb-10">
           {Object.values(providerMap).map((provider) => (
             <form
               key={provider.id}
@@ -61,7 +63,7 @@ export default async function SignInPage(props: SignInPageProps) {
                 }
               }}
             >
-              <Button variant={'secondary'} type="submit">
+              <Button variant={'default'} type="submit">
                 <span>Sign in with {provider.name}</span>
               </Button>
             </form>
