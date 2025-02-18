@@ -19,10 +19,6 @@ const eslintConfig = [
     },
     rules: {
       camelcase: ['error', { properties: 'always' }],
-      'no-unused-vars': [
-        'error',
-        { vars: 'all', args: 'after-used', ignoreRestSiblings: false },
-      ],
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
         'warn',
