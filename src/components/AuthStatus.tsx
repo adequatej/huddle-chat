@@ -1,6 +1,7 @@
 'use client';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import Image from 'next/image';
+import { Button } from './ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 export default function AuthStatus() {
   // Current auth status
@@ -8,39 +9,31 @@ export default function AuthStatus() {
 
   if (session && session.user) {
     return (
-      <>
-        <Image
-          src={session.user.image || ''}
-          alt={`${session.user.name}'s avatar`}
-          width={50}
-          height={50}
-          className="border-foreground rounded-full border-2 border-solid"
-        />
-        <div>
-          <p>{session.user.name}</p>
-          <p className="italic">{session.user.email}</p>
+      <div className="flex items-center gap-4">
+        <Avatar className="size-10">
+          <AvatarImage src={session.user.image || ''} />
+          <AvatarFallback>
+            {session.user.name?.charAt(0).toUpperCase() || '?'}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col">
+          <p>
+            Hello, <b>{session.user.name}</b>
+          </p>
         </div>
-        {/* Simple sign out button */}
-        <button
-          className="rounded bg-red-500 px-4 py-2 text-white"
-          onClick={() => signOut()}
-        >
+        <Button variant={'destructive'} onClick={() => signOut()}>
           Sign Out
-        </button>
-      </>
+        </Button>
+      </div>
     );
   }
 
   return (
-    <>
-      <span>Not logged in</span>
-      {/* Simple sign in button */}
-      <button
-        className="rounded bg-blue-500 px-4 py-2 text-white"
-        onClick={() => signIn()}
-      >
+    <div className="flex items-center gap-4">
+      <span>Not signed in.</span>
+      <Button variant={'secondary'} onClick={() => signIn()}>
         Sign In
-      </button>
-    </>
+      </Button>
+    </div>
   );
 }
