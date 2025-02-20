@@ -70,6 +70,7 @@ yarn lint
 ### Format
 
 ```bash
+yarn format # Same as prettier:write
 yarn prettier:check # check if the code is formatted
 yarn prettier:write # format the code
 ```
