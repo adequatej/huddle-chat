@@ -1,0 +1,31 @@
+import { ObjectId } from 'mongodb'
+import client from '@/lib/db';
+
+export type user = {
+    _id: ObjectId,
+    name: string,
+    email: string,
+    image?: string,
+    createdAt?: Date
+};
+
+// Get MongoDB collection
+const getUsersCollection = () => {
+    const db = client.db(process.env.MONGODB_DB);
+    return db.collections<User>('users');
+}
+
+// Create a new user
+export const createUser = async (user: User) => {
+    const users = await getUsersCollection()
+    const result = await users.insertOne({... user, createdAt: new Date()});
+    return result.insertedId
+}
+
+// Find user by email
+export const getUserByEmail = async (email: strimg) => {
+    const users = await getUsersCollection()
+    return users.findOne({ email })
+}
+
+
