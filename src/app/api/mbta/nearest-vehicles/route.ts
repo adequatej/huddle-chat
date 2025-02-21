@@ -5,12 +5,12 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   // Get long, lat, and acc query parameters
-  const long = Number(req.nextUrl.searchParams.get('lon'));
+  const lon = Number(req.nextUrl.searchParams.get('lon'));
   const lat = Number(req.nextUrl.searchParams.get('lat'));
   const acc = Number(req.nextUrl.searchParams.get('acc'));
 
   // Check if query parameters are valid
-  if (!long || !lat || !acc || isNaN(long) || isNaN(lat) || isNaN(acc)) {
+  if (!lon || !lat || !acc || isNaN(lon) || isNaN(lat) || isNaN(acc)) {
     return NextResponse.json(
       { error: 'Invalid query parameters' },
       { status: 400 },
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
   // Sort commuter trains by distance
   const nearestCommuterTrains = await getVehiclesSortedByDistance(
     currCommuterTrains,
-    { lat, long, acc },
+    { lat, lon, acc },
   );
 
   // Return the closest commuter trains, trimming unused data

@@ -5,12 +5,12 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   // Get long, lat, and acc query parameters
-  const long = Number(req.nextUrl.searchParams.get('lon'));
+  const lon = Number(req.nextUrl.searchParams.get('lon'));
   const lat = Number(req.nextUrl.searchParams.get('lat'));
   const acc = Number(req.nextUrl.searchParams.get('acc'));
 
   // Check if query parameters are valid
-  if (!long || !lat || !acc || isNaN(long) || isNaN(lat) || isNaN(acc)) {
+  if (!lon || !lat || !acc || isNaN(lon) || isNaN(lat) || isNaN(acc)) {
     return NextResponse.json(
       { error: 'Invalid query parameters' },
       { status: 400 },
@@ -29,14 +29,14 @@ export async function GET(req: NextRequest) {
   // - route type is commuter rail
   // - latitude and longitude are set
   const nearestStops = await requestMbta(
-    `/stops?page[limit]=5&filter[latitude]=${lat}&filter[longitude]=${long}&filter[route_type]=2`,
+    `/stops?page[limit]=5&filter[latitude]=${lat}&filter[longitude]=${lon}&filter[route_type]=2`,
     session.user,
   );
 
   // Sort commuter trains by distance
   const sortedStops = await getStopsSortedByDistance(nearestStops, {
     lat,
-    long,
+    lon,
     acc,
   });
 

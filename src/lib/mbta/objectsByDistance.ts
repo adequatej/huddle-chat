@@ -36,7 +36,7 @@ export async function getVehiclesSortedByDistance(
       const vehicleLon = attrs.longitude;
       const distance = getDistanceFromLatLonInMeters(
         targetLoc.lat,
-        targetLoc.long,
+        targetLoc.lon,
         vehicleLat,
         vehicleLon,
       );
@@ -69,7 +69,7 @@ export async function getStopsSortedByDistance(
       const stopLon = attrs.longitude;
       const distance = getDistanceFromLatLonInMeters(
         targetLoc.lat,
-        targetLoc.long,
+        targetLoc.lon,
         stopLat,
         stopLon,
       );

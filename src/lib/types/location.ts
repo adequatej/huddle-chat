@@ -1,5 +1,5 @@
 export type UserLocation = {
   lat: number;
-  long: number;
+  lon: number;
   acc: number;
 };
