@@ -87,3 +87,74 @@ AUTH_GITHUB_SECRET="" # your github secret
 AUTH_GOOGLE_ID="" # your google id
 AUTH_GOOGLE_SECRET="" # your google secret
 ```
+
+## API Docs
+
+### MBTA
+
+> #### Get Array of Nearest Stops
+>
+> `GET` `/api/mbta/nearest-stops`
+>
+> **Parameters**
+> | Name | Required | Data Type | Description |
+> | --- | --- | --- | --- |
+> | lat | true | number | Latitude |
+> | lon | true | number | Longitude |
+> | acc | true | number | Accuracy _(in meters)_ |
+>
+> **Response**
+>
+> ```json
+> [
+>   {
+>     "id": "WML-0442-CS",
+>     "distance": 247,
+>     "attributes": {
+>       "name": "Worcester",
+>       "description": "Worcester - Commuter Rail - Track 1 (All Trains)",
+>       "latitude": 42.261835,
+>       "longitude": -71.791806,
+>       "location_type": 0,
+>       "vehicle_type": 2,
+>       ...
+>     }
+>   },
+>   ...
+> ]
+> ```
+
+> #### Get Array of Nearest Vehicles
+>
+> `GET` `/api/mbta/nearest-vehicles`
+>
+> **Parameters**
+> | Name | Required | Data Type | Description |
+> | --- | --- | --- | --- |
+> | lat | true | number | Latitude |
+> | lon | true | number | Longitude |
+> | acc | true | number | Accuracy _(in meters)_ |
+>
+> **Response**
+>
+> ```json
+> [
+>   {
+>     "id": "1859",
+>     "distance": 22555, // in meters
+>     "attributes": {
+>       "current_status": "IN_TRANSIT_TO",
+>       "current_stop_sequence": 40,
+>       "direction_id": 1,
+>       "label": "1859",
+>       "latitude": 42.2677116394043,
+>       "longitude": -71.52082061767578,
+>       "revenue": "REVENUE",
+>       "speed": 10.3,
+>       "updated_at": "2025-02-21T11:26:56-05:00",
+>       ...
+>     }
+>   },
+>   ...
+> ]
+> ```

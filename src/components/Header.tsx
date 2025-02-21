@@ -19,7 +19,7 @@ import {
 
 export function Header() {
   return (
-    <header className="bg-accent flex w-full items-center justify-between p-4">
+    <header className="bg-accent fixed top-0 flex w-full items-center justify-between p-4">
       <div className="flex items-center gap-4">
         <Image
           src="/logo.svg"
