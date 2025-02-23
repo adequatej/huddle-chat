@@ -2,6 +2,7 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import Link from 'next/link';
 
 export default function AuthStatus() {
   // Current auth status
@@ -20,6 +21,12 @@ export default function AuthStatus() {
           <p>
             Hello, <b>{session.user.name}</b>
           </p>
+          <Link
+            href="/preferences"
+            className="text-muted-foreground text-sm hover:underline"
+          >
+            Preferences
+          </Link>
         </div>
         <Button variant={'destructive'} onClick={() => signOut()}>
           Sign Out

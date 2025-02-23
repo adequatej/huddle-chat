@@ -20,7 +20,7 @@ export const providerMap = providers
   .filter((provider) => provider.id !== 'credentials');
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: MongoDBAdapter(client),
+  adapter: MongoDBAdapter(client, { databaseName: 'huddle-chat' }),
   providers,
   pages: {
     signIn: '/signin',
@@ -37,6 +37,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name!,
           email: user.email!,
           image: user.image,
+          preferences: {
+            notifications: true,
+          },
+          chatHistory: {
+            lastViewed: new Date(),
+            recentChats: [],
+          },
         });
       }
 

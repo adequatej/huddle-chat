@@ -7,6 +7,13 @@ export type User = {
   email: string;
   image?: string | null;
   createdAt?: Date;
+  preferences?: {
+    notifications?: boolean;
+  };
+  chatHistory?: {
+    lastViewed?: Date;
+    recentChats?: string[];
+  };
 };
 
 // Get MongoDB collection
@@ -26,4 +33,22 @@ export const createUser = async (user: User) => {
 export const getUserByEmail = async (email: string) => {
   const users = getUsersCollection();
   return users.findOne({ email });
+};
+
+// Update user preferences
+export const updateUserPreferences = async (
+  email: string,
+  preferences: User['preferences'],
+) => {
+  const users = getUsersCollection();
+  return users.updateOne({ email }, { $set: { preferences } });
+};
+
+// Update chat history
+export const updateChatHistory = async (
+  email: string,
+  chatHistory: User['chatHistory'],
+) => {
+  const users = getUsersCollection();
+  return users.updateOne({ email }, { $set: { chatHistory } });
 };
