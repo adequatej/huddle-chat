@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import client from '@/lib/db';
 
+// Will add more preferences later
 export type User = {
   _id?: ObjectId;
   name: string;
@@ -9,10 +10,6 @@ export type User = {
   createdAt?: Date;
   preferences?: {
     notifications?: boolean;
-  };
-  chatHistory?: {
-    lastViewed?: Date;
-    recentChats?: string[];
   };
 };
 
@@ -42,13 +39,4 @@ export const updateUserPreferences = async (
 ) => {
   const users = getUsersCollection();
   return users.updateOne({ email }, { $set: { preferences } });
-};
-
-// Update chat history
-export const updateChatHistory = async (
-  email: string,
-  chatHistory: User['chatHistory'],
-) => {
-  const users = getUsersCollection();
-  return users.updateOne({ email }, { $set: { chatHistory } });
 };

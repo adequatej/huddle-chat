@@ -40,10 +40,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           preferences: {
             notifications: true,
           },
-          chatHistory: {
-            lastViewed: new Date(),
-            recentChats: [],
-          },
         });
       }
 

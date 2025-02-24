@@ -86,3 +86,11 @@ AUTH_GITHUB_SECRET="" # your github secret
 AUTH_GOOGLE_ID="" # your google id
 AUTH_GOOGLE_SECRET="" # your google secret
 ```
+
+# Features
+
+## Chat History
+
+- When a user sends a message, messages are saved in the chats collection with userId, chatId, and timestamp.
+- When retriving chat history, all messages are retrieved and joins w/ user data
+- Then messages are formatted and grouped by chat room (chatId)
