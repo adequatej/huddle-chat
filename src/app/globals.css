@@ -9,8 +9,8 @@
   --foreground: #071d2e;
   --card: #e2ecf9;
   --card-foreground: #071d2e;
-  --popover: #e2ecf9;
-  --popover-foreground: #071d2e;
+  --popover: #165c96;
+  --popover-foreground: #e2ecf9;
   --primary: #165c96;
   --primary-foreground: #e2ecf9;
   --secondary: #80276c;
@@ -37,8 +37,8 @@
   --foreground: #e2ecf9;
   --card: #071d2e;
   --card-foreground: #e2ecf9;
-  --popover: #071d2e;
-  --popover-foreground: #e2ecf9;
+  --popover: #a1c6ed;
+  --popover-foreground: #071d2e;
   --primary: #e2ecf9;
   --primary-foreground: #165c96;
   --secondary: #80276c;

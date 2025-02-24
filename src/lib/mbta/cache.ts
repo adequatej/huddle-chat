@@ -1,40 +1,67 @@
+import client from '../db';
+import { MBTACache } from '../types/mbta';
+
 const LOG_CACHE = process.env.LOG_CACHE === 'true';
 
 // Add data to cache.json
-function addCache(path: string, data: object) {
-  return { path, data };
-  // TODO: Real write to cache
-  // const cache = require('../data/cache.json');
-  // cache[path] = data;
-  // require('fs').writeFileSync(
-  //   require('path').resolve(__dirname, '../data/cache.json'),
-  //   JSON.stringify(cache, null, 2)
-  // );
+async function addCache(cache: MBTACache) {
+  // Insert cache data into the database
+  await client.db('huddle-chat').collection('mbta-cache').insertOne(cache);
+
+  return cache;
 }
 
 // Remove data from cache.json
-function removeCache(path: string) {
-  return { path };
-  // TODO: Real read from cache
-  // const cache = require('../data/cache.json');
-  // delete cache[path];
-  // TODO: Real write to cache
-  // require('fs').writeFileSync(
-  //   require('path').resolve(__dirname, '../data/cache.json'),
-  //   JSON.stringify(cache, null, 2)
-  // );
+async function removeCache(cache: MBTACache) {
+  const { endpoint, userId, path } = cache;
+
+  // Check if the endpoint is "stops" and the path includes latitude and longitude (cache for each user)
+  const stopDistanceCheck =
+    endpoint === 'stops' &&
+    path.includes('filter[latitude]') &&
+    path.includes('filter[longitude]');
+  if (stopDistanceCheck) {
+    await client
+      .db('huddle-chat')
+      .collection('mbta-cache')
+      .deleteMany({ endpoint, userId });
+    return cache;
+  }
+
+  await client.db('huddle-chat').collection('mbta-cache').deleteOne({ path });
+
+  return cache;
 }
 
 // Return cached data
-function getCachedData(path: string): {
-  cachedAt: number;
-  staleTime: number;
-  data: object;
-} {
-  return { cachedAt: 0, staleTime: 0, data: { path } };
-  // TODO: Real read from cache
-  // const cache = require('../data/cache.json');
-  // return cache[path] || null;
+async function getCachedData(
+  endpoint: string,
+  path: string,
+  userId: string,
+): Promise<MBTACache | null> {
+  // Check if the endpoint is "stops" and the path includes latitude and longitude (cache for each user)
+  const stopDistanceCheck =
+    endpoint === 'stops' &&
+    path.includes('filter[latitude]') &&
+    path.includes('filter[longitude]');
+
+  const cache = await client
+    .db('huddle-chat')
+    .collection('mbta-cache')
+    .findOne(stopDistanceCheck ? { endpoint, userId } : { path });
+
+  if (!cache) {
+    return null;
+  }
+
+  return {
+    userId: cache.userId,
+    endpoint: cache.endpoint,
+    path: cache.path,
+    cachedAt: cache.cachedAt,
+    staleTime: cache.staleTime,
+    data: cache.data,
+  };
 }
 
 // Log cache status
@@ -60,8 +87,10 @@ function logCache(
 }
 
 // Get cached data from cache.json
-export function checkCache(path: string) {
-  const cache = getCachedData(path); // Get cached data
+export async function checkCache(path: string, userId: string) {
+  const [endpoint] = splitPath(path);
+
+  const cache = await getCachedData(endpoint, path, userId); // Get cached data
 
   // Check if the path exists in the cache
   if (cache) {
@@ -76,7 +105,7 @@ export function checkCache(path: string) {
       logCache(path, 'stale', cachedAt, staleTime);
 
       // Remove the stale data from the cache
-      removeCache(path);
+      removeCache(cache);
 
       return null;
     }
@@ -95,38 +124,51 @@ export function checkCache(path: string) {
 function splitPath(path: string) {
   path = path.split('?')[0];
 
-  const pathParts = path.split('/');
+  const pathParts = path.split('/').slice(1);
 
   return pathParts;
 }
 
 // Cache data in cache.json
-export function cacheData(path: string, data: object) {
-  let staleTime = 1000 * 30; // 30 seconds
-  const pathParts = splitPath(path);
+export function cacheData(path: string, data: object, userId?: string) {
+  const [endpoint] = splitPath(path);
+
+  const cacheData: MBTACache = {
+    endpoint,
+    path,
+    cachedAt: Date.now(),
+    staleTime: 1000 * 30, // 30 seconds
+    data,
+  };
 
   // Set the stale time based on the path
-  switch (pathParts[1]) {
+  switch (endpoint) {
     case 'schedules':
-      staleTime = 1000 * 60 * 30; // 30 minutes
+      cacheData.staleTime = 1000 * 60 * 30; // 30 minutes
       break;
     case 'predictions':
-      staleTime = 1000 * 60 * 5; // 5 minutes
+      cacheData.staleTime = 1000 * 60 * 5; // 5 minutes
       break;
     case 'vehicles':
-      staleTime = 1000 * 30; // 30 seconds
+      cacheData.staleTime = 1000 * 30; // 30 seconds
       break;
     case 'stops':
-      staleTime = 1000 * 60 * 60 * 5; // 5 hours
+      // Check if the path includes latitude and longitude
+      const stopDistanceCheck =
+        path.includes('filter[latitude]') && path.includes('filter[longitude]');
+      if (stopDistanceCheck) {
+        cacheData.userId = userId; // Set the user id for location caches
+        cacheData.staleTime = 1000 * 30; // 30 seconds
+        break;
+      }
+
+      // Default stale time for stops
+      cacheData.staleTime = 1000 * 60 * 60 * 5; // 5 hours
       break;
     default:
       break;
   }
 
   // Write to cache
-  addCache(path, {
-    cachedAt: Date.now(),
-    staleTime,
-    data,
-  });
+  addCache(cacheData);
 }
