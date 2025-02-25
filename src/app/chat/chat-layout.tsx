@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { Input } from '@/components/ui/input';
 import { ChatSidebar } from '@/components/chat-sidebar';
 import {
   Sheet,
@@ -11,7 +12,14 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, FileClock, MapPin, Menu, House } from 'lucide-react';
+import {
+  AlertTriangle,
+  FileClock,
+  MapPin,
+  Menu,
+  House,
+  Send,
+} from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function Chat() {
@@ -20,10 +28,22 @@ export default function Chat() {
     title: string;
     messages: string[];
     url: string;
-    icon: string; // Array of messages
+    icon: string;
   }
 
   const [selectedChat, setSelectedChat] = useState<item | null>(null);
+  const [sentMessage, setSentMessage] = useState<string>('');
+
+  const messageSent = () => {
+    if (selectedChat && sentMessage.trim() != '') {
+      setSelectedChat({
+        ...selectedChat,
+        messages: [...selectedChat.messages, sentMessage],
+      });
+      setSentMessage('');
+    }
+  };
+
   return (
     <>
       <SidebarProvider>
@@ -33,7 +53,9 @@ export default function Chat() {
             <div className="flex items-center gap-4">
               <Avatar className="size-10 md:block">
                 <AvatarImage />
-                <AvatarFallback className="bg-card">CN</AvatarFallback>
+                <AvatarFallback className="bg-card">
+                  {selectedChat?.icon}
+                </AvatarFallback>
               </Avatar>
               <span>
                 {selectedChat
@@ -56,9 +78,9 @@ export default function Chat() {
                           {selectedChat ? selectedChat.title : 'Pick Somebody'}
                         </span>
                         <Avatar className="size-28 md:block">
-                          <AvatarImage src="/logo.svg" />
-                          <AvatarFallback className="bg-accent">
-                            CN
+                          <AvatarImage />
+                          <AvatarFallback className="bg-accent text-5xl">
+                            {selectedChat?.icon}
                           </AvatarFallback>
                         </Avatar>
                       </SheetTitle>
@@ -91,17 +113,43 @@ export default function Chat() {
               </nav>
             </div>
           </header>
-          <div className="flex-1 space-y-12 p-4">
+          <div className="bg-sidebar fixed bottom-0 flex w-317 items-center justify-end p-3">
+            <Input
+              type="text"
+              placeholder="Type a message"
+              value={sentMessage}
+              onChange={(e) => setSentMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  messageSent();
+                }
+              }}
+            />
+            <Button
+              type="submit"
+              variant="ghost"
+              className="absolute"
+              onClick={messageSent}
+            >
+              <Send color="#3e9392" />
+            </Button>
+          </div>
+          <div className="flex-1 space-y-12 p-20">
             {selectedChat ? (
               <>
-                <h3 className="text-xl">{selectedChat.title}</h3>
                 <div className="mt-4">
                   {selectedChat.messages.map((message, index) => (
-                    <div
-                      key={index}
-                      className="bg-accent mb-5 max-w-[30%] rounded-md p-2 break-words"
-                    >
-                      <p>{message}</p>
+                    <div key={index} className="flex flex-row space-x-2">
+                      <Avatar className="size-10 md:block">
+                        <AvatarImage />
+                        <AvatarFallback className="bg-accent">
+                          {selectedChat?.icon}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="bg-accent mb-5 max-w-[30%] rounded-md p-2 break-words">
+                        <p className="text-xl">{selectedChat.title}</p>
+                        <p>{message}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
