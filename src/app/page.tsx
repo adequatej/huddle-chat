@@ -12,6 +12,42 @@ import { AlertTriangle, FileClock, MessagesSquare } from 'lucide-react';
 import { auth } from './auth';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Footer } from '@/components/Footer';
+import { ReactElement } from 'react';
+
+function FeatureCard({
+  icon,
+  title,
+  description,
+  features,
+}: {
+  icon: ReactElement;
+  title: string;
+  description: string;
+  features: string[];
+}) {
+  return (
+    <Card className="bg-popover text-background -z-20 mt-8 w-full">
+      <CardHeader className="relative pt-10 text-center text-xl">
+        <div className="bg-secondary border-secondary-foreground absolute top-0 left-1/2 -z-10 -translate-x-1/2 -translate-y-1/2 transform rounded-full border">
+          {icon}
+        </div>
+        <CardTitle className="mt-3">{title}</CardTitle>
+        <CardDescription className="text-background/80">
+          {description}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Separator className="mb-3" />
+        <ul className="ml-6 list-disc">
+          {features.map((feature, i) => (
+            <li key={i}>{feature}</li>
+          ))}
+        </ul>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default async function Home() {
   const session = await auth();
@@ -30,11 +66,11 @@ export default async function Home() {
             train.
           </p>
           {!!session ? (
-            <Button asChild size={'lg'}>
+            <Button asChild size={'lg'} className="animate-fade-in delay-200">
               <Link href="/chat">Start Chatting</Link>
             </Button>
           ) : (
-            <Button asChild size={'lg'}>
+            <Button asChild size={'lg'} className="animate-fade-in delay-200">
               <Link href="/signin">Get Started</Link>
             </Button>
           )}
@@ -51,7 +87,7 @@ export default async function Home() {
 
       {/* Mobile landing */}
       <section className="bg-secondary flex flex-col items-center gap-8 rounded-br-3xl rounded-bl-3xl p-10 pt-30 lg:hidden">
-        <h1 className="text-secondary-foreground text-3xl font-bold">
+        <h1 className="text-secondary-foreground text-center text-5xl font-bold">
           Huddle Chat
         </h1>
         <p className="text-secondary-foreground/80 text-center">
@@ -78,66 +114,48 @@ export default async function Home() {
           <h1 className="text-2xl font-bold">Features</h1>
 
           <div className="grid w-full gap-4 px-5 md:grid-cols-3 md:gap-8">
-            <Card className="bg-popover text-background -z-20 mt-5 w-full">
-              <CardHeader className="relative pt-10 text-center text-xl">
-                <div className="bg-secondary border-secondary-foreground absolute top-0 left-1/2 -z-10 -translate-x-1/2 -translate-y-1/2 transform rounded-full border">
-                  <FileClock className="text-secondary-foreground m-4 size-8" />
-                </div>
-                <CardTitle className="mt-3">Time Table</CardTitle>
-                <CardDescription className="text-background/80">
-                  View train times and schedules.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Separator className="mb-3" />
-                <ul className="ml-6 list-disc">
-                  <li>View train times and schedules.</li>
-                  <li>See information about your train&apos;s arrival time.</li>
-                  <li>View up-to-date seasonal schedules.</li>
-                </ul>
-              </CardContent>
-            </Card>
-            <Card className="bg-popover text-background -z-20 mt-5 w-full">
-              <CardHeader className="relative pt-10 text-center text-xl">
-                <div className="bg-secondary border-secondary-foreground absolute top-0 left-1/2 -z-10 -translate-x-1/2 -translate-y-1/2 transform rounded-full border">
-                  <MessagesSquare className="text-secondary-foreground m-4 size-8" />
-                </div>
-                <CardTitle className="mt-3">Chat</CardTitle>
-                <CardDescription className="text-background/80">
-                  Chat with others users in the same station or train.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Separator className="mb-3" />
-                <ul className="ml-6 list-disc">
-                  <li>Chat with other users in the same station.</li>
-                  <li>Chat with other users in the same train.</li>
-                  <li>Connect with other commuters.</li>
-                </ul>
-              </CardContent>
-            </Card>
-            <Card className="bg-popover text-background -z-20 mt-5 w-full">
-              <CardHeader className="relative pt-10 text-center text-xl">
-                <div className="bg-secondary border-secondary-foreground absolute top-0 left-1/2 -z-10 -translate-x-1/2 -translate-y-1/2 transform rounded-full border">
-                  <AlertTriangle className="text-secondary-foreground m-4 size-8" />
-                </div>
-                <CardTitle className="mt-3">Alerts</CardTitle>
-                <CardDescription className="text-background/80">
-                  Get MBTA alerts, even when you&apos;re chatting!
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Separator className="mb-3" />
-                <ul className="ml-6 list-disc">
-                  <li>Receive detailed alerts straight from the MBTA.</li>
-                  <li>Get notified of delays and cancellations.</li>
-                  <li>Receive alerts about your trip while chatting.</li>
-                </ul>
-              </CardContent>
-            </Card>
+            <FeatureCard
+              icon={
+                <FileClock className="text-secondary-foreground m-4 size-8" />
+              }
+              title={'Time Table'}
+              description={'View train times and schedules.'}
+              features={[
+                'View train times and schedules.',
+                "See information about your train's arrival time.",
+                'View up-to-date seasonal schedules.',
+              ]}
+            />
+            <FeatureCard
+              icon={
+                <MessagesSquare className="text-secondary-foreground m-4 size-8" />
+              }
+              title={'Chat'}
+              description={
+                'Chat with others users in the same station or train.'
+              }
+              features={[
+                'Chat with other users in the same station.',
+                'Chat with other users in the same train.',
+                'Connect with other commuters.',
+              ]}
+            />
+            <FeatureCard
+              icon={
+                <AlertTriangle className="text-secondary-foreground m-4 size-8" />
+              }
+              title={'Alerts'}
+              description={"Get MBTA alerts, even when you're chatting!"}
+              features={[
+                'Receive detailed alerts straight from the MBTA.',
+                'Get notified of delays and cancellations.',
+                'Receive alerts about your trip while chatting.',
+              ]}
+            />
           </div>
         </section>
       </main>
+      <Footer />
     </>
   );
 }
