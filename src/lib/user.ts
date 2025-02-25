@@ -1,21 +1,9 @@
-import { ObjectId } from 'mongodb';
 import client from '@/lib/db';
-
-// Will add more preferences later
-export type User = {
-  _id?: ObjectId;
-  name: string;
-  email: string;
-  image?: string | null;
-  createdAt?: Date;
-  preferences?: {
-    notifications?: boolean;
-  };
-};
+import { User, UserPreferences } from '@/lib/types/user';
 
 // Get MongoDB collection
 const getUsersCollection = () => {
-  const db = client.db(process.env.MONGODB_DB);
+  const db = client.db('huddle-chat');
   return db.collection<User>('users');
 };
 
@@ -35,7 +23,7 @@ export const getUserByEmail = async (email: string) => {
 // Update user preferences
 export const updateUserPreferences = async (
   email: string,
-  preferences: User['preferences'],
+  preferences: UserPreferences,
 ) => {
   const users = getUsersCollection();
   return users.updateOne({ email }, { $set: { preferences } });

@@ -24,7 +24,9 @@ export default async function PreferencesPage() {
         </Link>
         <h1 className="text-3xl font-bold">Your Preferences</h1>
       </div>
-      <PreferencesForm initialPreferences={user.preferences} />
+      <PreferencesForm
+        initialPreferences={user.preferences ?? { notifications: false }}
+      />
     </div>
   );
 }

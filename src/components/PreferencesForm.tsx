@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { User } from '@/lib/user';
+import { UserPreferences } from '@/lib/types/user';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 type PreferencesFormProps = {
-  initialPreferences: User['preferences'];
+  initialPreferences: UserPreferences;
 };
 
 export default function PreferencesForm({
@@ -33,20 +35,18 @@ export default function PreferencesForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={preferences?.notifications}
-            onChange={(e) =>
-              setPreferences({
-                ...preferences,
-                notifications: e.target.checked,
-              })
-            }
-          />
-          Enable Notifications
-        </label>
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="notifications"
+          checked={preferences.notifications}
+          onCheckedChange={(checked: boolean) =>
+            setPreferences({
+              ...preferences,
+              notifications: checked,
+            })
+          }
+        />
+        <Label htmlFor="notifications">Enable Notifications</Label>
       </div>
       <Button type="submit">Save Preferences</Button>
     </form>

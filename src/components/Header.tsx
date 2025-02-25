@@ -3,7 +3,6 @@ import AuthStatus from './AuthStatus';
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -15,7 +14,9 @@ import {
   MapPin,
   Menu,
   MessagesSquare,
+  Settings,
 } from 'lucide-react';
+import Link from 'next/link';
 
 export function Header() {
   return (
@@ -46,27 +47,33 @@ export function Header() {
                 <SheetTitle className="flex items-center gap-4">
                   <AuthStatus />
                 </SheetTitle>
-                <SheetDescription className="mt-10">
-                  <ul className="ml-5 space-y-4 text-2xl">
-                    <li className="flex cursor-pointer items-center gap-2 hover:underline">
-                      <FileClock />
-                      <span className="ml-2">Time Table</span>
-                    </li>
-                    <li className="flex cursor-pointer items-center gap-2 hover:underline">
-                      <MessagesSquare />
-                      <span className="ml-2">Chat</span>
-                    </li>
-                    <li className="flex cursor-pointer items-center gap-2 hover:underline">
-                      <AlertTriangle />
-                      <span className="ml-2">Alerts</span>
-                    </li>
-                  </ul>
-                  <span className="absolute bottom-0 mb-5 flex">
-                    <MapPin />
-                    <span className="ml-2">[Current Vehicle or Stop]</span>
-                  </span>
-                </SheetDescription>
               </SheetHeader>
+              <div className="mt-10">
+                <ul className="ml-5 space-y-4 text-2xl">
+                  <li className="flex cursor-pointer items-center gap-2 hover:underline">
+                    <FileClock />
+                    <span className="ml-2">Time Table</span>
+                  </li>
+                  <li className="flex cursor-pointer items-center gap-2 hover:underline">
+                    <MessagesSquare />
+                    <span className="ml-2">Chat</span>
+                  </li>
+                  <li className="flex cursor-pointer items-center gap-2 hover:underline">
+                    <AlertTriangle />
+                    <span className="ml-2">Alerts</span>
+                  </li>
+                  <Link href="/preferences">
+                    <li className="flex cursor-pointer items-center gap-2 hover:underline">
+                      <Settings />
+                      <span className="ml-2">Preferences</span>
+                    </li>
+                  </Link>
+                </ul>
+                <span className="absolute bottom-0 mb-5 flex">
+                  <MapPin />
+                  <span className="ml-2">[Current Vehicle or Stop]</span>
+                </span>
+              </div>
             </SheetContent>
           </Sheet>
         </nav>
