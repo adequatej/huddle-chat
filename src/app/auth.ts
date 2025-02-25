@@ -4,7 +4,7 @@ import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import GitHub from 'next-auth/providers/github';
 import type { Provider } from 'next-auth/providers';
-import { getUserByEmail, createUser } from '@/lib/user';
+import { updateUserPreferences, getUserByEmail } from '@/lib/user';
 
 const providers: Provider[] = [Google, GitHub];
 
@@ -25,33 +25,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: '/signin',
   },
-  callbacks: {
-    // Handle user sign-in
-    async signIn({ user }) {
-      // Check if user exists in DB
-      const existingUser = await getUserByEmail(user.email!);
-
-      // If user does not exist, create one
-      if (!existingUser) {
-        await createUser({
-          name: user.name!,
-          email: user.email!,
-          image: user.image,
-          preferences: {
-            notifications: true,
-          },
-        });
-      }
-
-      return true; // Allow sign-in
+  events: {
+    createUser: async ({ user }) => {
+      // Update the Auth.js user with our custom fields
+      await updateUserPreferences(user.email!, {
+        notifications: true,
+        onboarded: false, // New users start as not onboarded
+      });
     },
-
+  },
+  callbacks: {
     // Add user ID to session
     async session({ session }) {
       const existingUser = await getUserByEmail(session.user.email!);
 
       if (existingUser) {
-        session.user.id = existingUser._id?.toString(); // Convert MongoDB ObjectId to string
+        session.user.id = existingUser._id?.toString();
+        // Add onboarded status to session
+        session.user.onboarded = existingUser.preferences?.onboarded ?? false;
       }
 
       return session;

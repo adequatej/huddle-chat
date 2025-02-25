@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 
 export type UserPreferences = {
   notifications: boolean;
+  onboarded?: boolean;
 };
 
 export type User = {
