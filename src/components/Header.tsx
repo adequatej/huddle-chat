@@ -14,9 +14,7 @@ import {
   MapPin,
   Menu,
   MessagesSquare,
-  Settings,
 } from 'lucide-react';
-import Link from 'next/link';
 
 export function Header() {
   return (
@@ -62,12 +60,6 @@ export function Header() {
                     <AlertTriangle />
                     <span className="ml-2">Alerts</span>
                   </li>
-                  <Link href="/preferences">
-                    <li className="flex cursor-pointer items-center gap-2 hover:underline">
-                      <Settings />
-                      <span className="ml-2">Preferences</span>
-                    </li>
-                  </Link>
                 </ul>
                 <span className="absolute bottom-0 mb-5 flex">
                   <MapPin />
