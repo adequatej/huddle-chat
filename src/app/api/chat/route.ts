@@ -1,6 +1,7 @@
 import { auth } from '@/app/auth';
 import client from '@/lib/db';
 import {
+  Chat,
   ChatMessage,
   ChatPostBody,
   MongoDBChatMessage,
@@ -57,19 +58,34 @@ export async function GET() {
         name: message.user?.name,
         image: message.user?.image,
       },
-      reported: message.reported,
     }))
     .sort((a, b) => a.timestamp - b.timestamp) as ChatMessage[];
 
   // Split chat messages into their chat rooms (removing reported messages)
-  const chatRooms = formattedMessages.reduce(
-    (acc, message) => {
-      if (message.reported) return acc;
-      if (!acc[message.chatId]) acc[message.chatId] = [];
-      acc[message.chatId].push(message);
-      return acc;
-    },
-    {} as Record<string, ChatMessage[]>,
+  const chatRooms: Chat[] = Object.values(
+    formattedMessages.reduce(
+      (acc, message) => {
+        if (message.reported) return acc;
+        if (!acc[message.chatId])
+          acc[message.chatId] = {
+            chatId: message.chatId,
+            chatType: message.chatType,
+            messages: [],
+          };
+        acc[message.chatId].messages.push({
+          messageId: message.messageId,
+          message: message.message,
+          reaction: message.reaction,
+          replyId: message.replyId,
+          timestamp: message.timestamp,
+          user: message.user,
+        });
+        return acc;
+      },
+      {} as {
+        [chatId: string]: Chat;
+      },
+    ),
   );
 
   return NextResponse.json(chatRooms);

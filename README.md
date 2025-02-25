@@ -221,40 +221,40 @@ AUTH_GOOGLE_SECRET="" # your google secret
 > **Response**
 >
 > ```json
-> {
->   "test": [
->     {
->       "chatType": "stop",
->       "messageId": "67ba072a59f64d1a5a286bb8",
->       "message": "Wow that's pretty neat",
->       "timestamp": 1740244778845,
->       "user": {
->         "id": "67b9fe803721e4f2da4be54b",
->         "name": "Daniel",
->         "image": "https://avatars.githubusercontent.com/u/20031472?v=4"
+> [
+>   {
+>     "chatId": "69ba7e0f56f64d1a5a286cab",
+>     "chatType": "stop",
+>     "messages": [
+>       {
+>         "messageId": "67ba072a59f64d1a5a286bb8",
+>         "message": "Wow that's pretty neat",
+>         "timestamp": 1740244778845,
+>         "user": {
+>           "id": "67b9fe803721e4f2da4be54b",
+>           "name": "Daniel",
+>           "image": "https://avatars.githubusercontent.com/u/20031472?v=4"
+>         }
 >       },
->       "reported": false
->     },
->     {
->       "chatType": "stop",
->       "messageId": "67ba0e0f59f64d1a5a286bbb",
->       "message": "Yes, I am replying to my own message",
->       "replyId": "67ba072a59f64d1a5a286bb8",
->       "timestamp": 1740246543780,
->       "user": ...,
->       "reported": false
->     },
->     {
->       "chatType": "stop",
->       "messageId": "67ba0e6559f64d1a5a286bbc",
->       "reaction": "❤️",
->       "replyId": "67ba0e0f59f64d1a5a286bbb",
->       "timestamp": 1740246629949,
->       "user": ...,
->       "reported": false
->     }
->   ]
-> }
+>       {
+>         "chatType": "stop",
+>         "messageId": "67ba0e0f59f64d1a5a286bbb",
+>         "message": "Yes, I am replying to my own message",
+>         "replyId": "67ba072a59f64d1a5a286bb8",
+>         "timestamp": 1740246543780,
+>         "user": {...}
+>       },
+>       {
+>         "chatType": "stop",
+>         "messageId": "67ba0e6559f64d1a5a286bbc",
+>         "reaction": "❤️",
+>         "replyId": "67ba0e0f59f64d1a5a286bbb",
+>         "timestamp": 1740246629949,
+>         "user": {...}
+>       }
+>     ]
+>   }
+> ]
 > ```
 
 > #### Send Chat Message
