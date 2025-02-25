@@ -25,8 +25,11 @@ export type ChatMessage = ChatPostBody & {
   reported: boolean; // Whether the message has been reported
 };
 
-export type StrippedMessage = SimpleMessage & {
+export type APIMessage = {
   messageId: string;
+  message: string;
+  reactions: { [reaction: string]: number };
+  replyId?: string;
   timestamp: number;
   user: User;
 };
@@ -34,5 +37,5 @@ export type StrippedMessage = SimpleMessage & {
 export type Chat = {
   chatId: string;
   chatType: 'vehicle' | 'stop';
-  messages: StrippedMessage[];
+  messages: APIMessage[];
 };

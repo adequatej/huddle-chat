@@ -72,10 +72,23 @@ export async function GET() {
             chatType: message.chatType,
             messages: [],
           };
+
+        if (!message.message && message.reaction) {
+          const referencedMessage = acc[message.chatId].messages.find(
+            (m) => m.messageId === message.replyId,
+          );
+          if (referencedMessage) {
+            if (!referencedMessage.reactions[message.reaction])
+              referencedMessage.reactions[message.reaction] = 0;
+            referencedMessage.reactions[message.reaction]++;
+          }
+          return acc;
+        }
+
         acc[message.chatId].messages.push({
           messageId: message.messageId,
-          message: message.message,
-          reaction: message.reaction,
+          message: message.message as string,
+          reactions: {},
           replyId: message.replyId,
           timestamp: message.timestamp,
           user: message.user,
