@@ -29,6 +29,8 @@ export function useLocation() {
 
   const fetch = async () => {
     setLoading(true);
+    setError(null);
+    setLocation(null);
     try {
       try {
         const location = await getLocation();

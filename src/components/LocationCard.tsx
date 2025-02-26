@@ -66,18 +66,21 @@ export default function LocationCard({ success }: { success?: () => void }) {
         <div className="flex flex-grow flex-col gap-2">
           <h2 className="text-lg font-bold">{title}</h2>
           <p className="text-foreground/75 text-xs">{description}</p>
-          {error && error.code === 1 && retryCount < 2 && (
-            <Button
-              className="w-min"
-              size="sm"
-              onClick={() => {
-                setRetryCount((count) => count + 1);
-                fetch();
-              }}
-            >
-              Try again
-            </Button>
-          )}
+          {error &&
+            error.code === 1 &&
+            retryCount < 2 &&
+            !locationAvailable && (
+              <Button
+                className="w-min"
+                size="sm"
+                onClick={() => {
+                  setRetryCount((count) => count + 1);
+                  fetch();
+                }}
+              >
+                Try again
+              </Button>
+            )}
         </div>
       </CardContent>
     </Card>
