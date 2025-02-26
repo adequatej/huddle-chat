@@ -1,4 +1,7 @@
+'use client';
+
 import { Header } from '@/components/Header';
+import RequireOnboarding from '@/components/RequireOnboarding';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -82,7 +85,7 @@ export default async function Home() {
   const session = await auth();
 
   return (
-    <>
+    <RequireOnboarding>
       <Header />
       {/* Desktop landing */}
       <section className="relative hidden md:block">
@@ -295,6 +298,6 @@ export default async function Home() {
         </section>
       </main>
       <Footer />
-    </>
+    </RequireOnboarding>
   );
 }
