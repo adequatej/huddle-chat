@@ -25,10 +25,12 @@ export type ChatMessage = ChatPostBody & {
   reported: boolean; // Whether the message has been reported
 };
 
+export type Reactions = { [reaction: string]: number };
+
 export type APIMessage = {
   messageId: string;
   message: string;
-  reactions: { [reaction: string]: number };
+  reactions: Reactions;
   replyId?: string;
   timestamp: number;
   user: User;
