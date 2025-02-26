@@ -35,6 +35,59 @@ Deploy your app, in the form of a webpage, to Glitch, Vercel, AWS, Heroku or som
 
 ---
 
+# Huddle Chat
+
+## Table of Contents
+
+- [Team Members](#team-members)
+- [Project Description](#project-description)
+- [Technologies](#technologies)
+- [Dev Setup](#dev-setup)
+  - [Install dependencies](#install-dependencies)
+  - [Run the development server](#run-the-development-server)
+  - [Build for production](#build-for-production)
+  - [Run the production server](#run-the-production-server)
+  - [Lint](#lint)
+  - [Format](#format)
+  - [Environment variables](#env)
+- [API Docs](#api-docs)
+  - [MBTA](#mbta)
+    - [Get Array of Nearest Stops](#get-array-of-nearest-stops)
+    - [Get Array of Nearest Vehicles](#get-array-of-nearest-vehicles)
+  - [Chat](#chat)
+    - [Get Chat Messages](#get-chat-messages)
+    - [Send Chat Message](#send-chat-message)
+    - [Send Chat Reply](#send-chat-reply)
+    - [Send Chat Reaction](#send-chat-reaction)
+
+## Team Members
+
+| Name           | GitHub Username                                 |
+| -------------- | ----------------------------------------------- |
+| Jed Geoghegan  | [adequatej](https://github.com/adequatej)       |
+| Leo Hirano     | [notLeoHirano](https://github.com/notLeoHirano) |
+| Benson Lin     | [Zirins](https://github.com/Zirins)             |
+| Daniel Stoiber | [da-stoi](https://github.com/da-stoi)           |
+| Bryan Suria    | [BSuria](https://github.com/BSuria)             |
+
+## Project Description
+
+Huddle chat is a web application that allows users to chat with other users on MBTA public transport. Users can chat with other users on the same vehicle or at the same stop. Users can also react to messages and reply to messages. After signing in, users can see the nearest stops and vehicles to them. If a user is close to a stop or vehicle, they can chat with other users at that stop or vehicle. Users can also report messages that are inappropriate.
+
+## Technologies
+
+| Technology                                    | Purpose         | Description                                                                                    |
+| --------------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------- |
+| [Next.js](https://nextjs.org/)                | Framework       | Next.js is a React framework that allows for server-side rendering and static site generation. |
+| [TypeScript](https://www.typescriptlang.org/) | Language        | TypeScript is a superset of JavaScript that adds static types to the language.                 |
+| [MongoDB](https://www.mongodb.com/)           | Database        | MongoDB is a NoSQL database that stores data in JSON-like documents.                           |
+| [Auth.js](https://authjs.dev/)                | Authentication  | Auth.js is a library that provides authentication for web applications.                        |
+| [Shadcn/ui](https://ui.shadcn.com/)           | Styling         | Shadcn/ui is a React component library that provides styled components.                        |
+| [Tailwind CSS](https://tailwindcss.com/)      | Styling         | Tailwind CSS is a utility-first CSS framework that provides pre-built styles.                  |
+| [ESLint](https://eslint.org/)                 | Developer Tools | ESLint is a linter that statically analyzes code to find and fix problems.                     |
+| [Prettier](https://prettier.io/)              | Developer Tools | Prettier is a code formatter that automatically formats code.                                  |
+| [Husky](https://typicode.github.io/husky/)    | Developer Tools | Husky is a tool that allows for running scripts on Git hooks.                                  |
+
 ## Dev Setup
 
 ### Install dependencies
@@ -75,7 +128,7 @@ yarn prettier:check # check if the code is formatted
 yarn prettier:write # format the code
 ```
 
-## `.env`
+### `.env`
 
 ```env
 AUTH_SECRET="" # next-auth secret
@@ -158,3 +211,101 @@ AUTH_GOOGLE_SECRET="" # your google secret
 >   ...
 > ]
 > ```
+
+### Chat
+
+> #### Get Chat Messages
+>
+> `GET` `/api/chat`
+>
+> **Response**
+>
+> ```json
+> [
+>   {
+>     "chatId": "test",
+>     "chatType": "stop",
+>     "messages": [
+>       {
+>         "messageId": "67ba072a59f64d1a5a286bb8",
+>         "message": "Wow that's pretty neat",
+>         "reactions": {},
+>         "timestamp": 1740244778845,
+>         "user": {
+>           "id": "67be4da06911c1b78d81a327",
+>           "name": "Daniel",
+>           "image": "https://avatars.githubusercontent.com/u/20031472?v=4"
+>         }
+>       },
+>       {
+>         "messageId": "67ba0e0f59f64d1a5a286bbb",
+>         "message": "Yes, I am replying to my own message",
+>         "reactions": { "❤️": 1 },
+>         "replyId": "67ba072a59f64d1a5a286bb8",
+>         "timestamp": 1740246543780,
+>         "user": {
+>           "id": "67be4da06911c1b78d81a327",
+>           "name": "Daniel",
+>           "image": "https://avatars.githubusercontent.com/u/20031472?v=4"
+>         }
+>       }
+>     ]
+>   }
+> ]
+> ```
+
+> #### Send Chat Message
+>
+> `POST` `/api/chat`
+>
+> **Body**
+>
+> ```json
+> {
+>   "chatId": "<vehicle/stop id>",
+>   "chatType": "<vehicle | stop>",
+>   "message": "Chat message..."
+> }
+> ```
+>
+> **Response**
+>
+> `200 OK`
+
+> #### Send Chat Reply
+>
+> `POST` `/api/chat`
+>
+> **Body**
+>
+> ```json
+> {
+>   "chatId": "<vehicle/stop id>",
+>   "chatType": "<vehicle | stop>",
+>   "message": "Chat message reply...",
+>   "replyId": "<chat message id to reply to>"
+> }
+> ```
+>
+> **Response**
+>
+> `200 OK`
+
+> #### Send Chat Reaction
+>
+> `POST` `/api/chat`
+>
+> **Body**
+>
+> ```json
+> {
+>   "chatId": "<vehicle/stop id>",
+>   "chatType": "<vehicle | stop>",
+>   "reaction": "❤️",
+>   "replyId": "<chat message id to react to>"
+> }
+> ```
+>
+> **Response**
+>
+> `200 OK`
