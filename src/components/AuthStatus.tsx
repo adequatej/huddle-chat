@@ -27,7 +27,6 @@ function AvatarDropdown({ session }: { session: Session }) {
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Settings</DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/preferences">Preferences</Link>
         </DropdownMenuItem>
