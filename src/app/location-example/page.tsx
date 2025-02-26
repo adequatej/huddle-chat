@@ -1,24 +1,15 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { getLocation } from '@/lib/getLocation';
-import { UserLocation } from '@/lib/types/location';
+import LocationGate from '@/components/LocationGate';
+import { useLocation } from '@/lib/getLocation';
 
 export default function LocationPage() {
-  const [location, setLocation] = useState<UserLocation | null>(null);
+  const { location, error, loading, fetch } = useLocation();
 
-  useEffect(() => {
-    getLocation()
-      .then((data) => {
-        setLocation(data);
-        console.log('Location data:', data);
-      })
-      .catch((error) => {
-        console.error('Error fetching location:', error);
-      });
-  }, []);
+  console.log({ location, error, loading });
 
   return (
     <div>
+      <LocationGate success={fetch} />
       {location ? (
         <p>
           Latitude: {location.lat}, Longitude: {location.lon}, Accuracy:{' '}
