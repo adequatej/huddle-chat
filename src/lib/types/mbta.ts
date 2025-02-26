@@ -25,3 +25,29 @@ export type MBTAVehicle = {
   id: string;
   distance?: number; // Meters from user location
 };
+
+export type MBTAAlert = {
+  id: string;
+  attributes: {
+    updated_at: string;
+    timeframe: string;
+    short_header: string;
+    severity: number;
+    service_effect: string;
+    lifecycle: string;
+    image_alternative_text: string;
+    image: string;
+    header: string;
+    effect_name: string;
+    description: string;
+    created_at: string;
+    cause: string;
+    banner: string;
+    active_period: [
+      {
+        start: string;
+        end: string;
+      },
+    ];
+  };
+};
