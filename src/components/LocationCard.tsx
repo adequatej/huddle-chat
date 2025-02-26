@@ -53,7 +53,7 @@ export default function LocationCard({ success }: { success?: () => void }) {
     if (error && error.code === 1)
       return "Please update your location permissions in your browser's site settings."; // Location denied
     if (location)
-      return `Lat: ${location.lat.toFixed(6)}, Lon: ${location.lon.toFixed(6)}, Accuracy: ${location.acc}`; // Location found
+      return `Lat: ${location.lat}, Lon: ${location.lon}, Accuracy: ${location.acc}`; // Location found
     return 'Location access is required to use chat features.';
   }, [loading, error, location]);
 

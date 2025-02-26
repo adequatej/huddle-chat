@@ -6,10 +6,11 @@ export async function getLocation(): Promise<UserLocation> {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         ({ coords }: GeolocationPosition) => {
+          console.log(coords);
           resolve({
-            lat: coords.latitude,
-            lon: coords.longitude,
-            acc: coords.accuracy,
+            lat: Number(coords.latitude.toFixed(6)),
+            lon: Number(coords.longitude.toFixed(6)),
+            acc: Math.round(coords.accuracy),
           });
         },
         (error) => {
