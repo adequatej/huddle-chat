@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { Separator } from './ui/separator';
-import Link from 'next/link';
 
 export function Footer() {
   return (
@@ -24,11 +23,7 @@ export function Footer() {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-foreground/75 text-sm">
-            Made with ❤️ by{' '}
-            <Link href="/about" className="hover:text-foreground/100 underline">
-              Team H
-            </Link>
-            .
+            Made with ❤️ by Team H.
           </span>
         </div>
       </footer>
