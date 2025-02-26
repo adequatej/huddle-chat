@@ -13,7 +13,6 @@ export async function getLocation(): Promise<UserLocation> {
           });
         },
         (error) => {
-          console.error('Geolocation error:', error);
           reject(error);
         },
       );

@@ -1,5 +1,5 @@
 import AuthStatus from '@/components/AuthStatus';
-import ColorPalette from '@/components/ColorPalette';
+import LocationCard from '@/components/LocationCard';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
           <ThemeSwitcher />
           <AuthStatus />
         </div>
-        <ColorPalette />
+        <LocationCard />
       </main>
     </div>
   );
