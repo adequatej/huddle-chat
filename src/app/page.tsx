@@ -1,5 +1,3 @@
-'use client';
-
 import { Header } from '@/components/Header';
 import RequireOnboarding from '@/components/RequireOnboarding';
 import { Button } from '@/components/ui/button';

@@ -3,6 +3,7 @@ import AuthStatus from './AuthStatus';
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
