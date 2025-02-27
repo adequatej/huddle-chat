@@ -3,22 +3,18 @@ import AuthStatus from './AuthStatus';
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from './ui/sheet';
 import { Button } from './ui/button';
-import {
-  AlertTriangle,
-  FileClock,
-  MapPin,
-  Menu,
-  MessagesSquare,
-} from 'lucide-react';
+import { AlertTriangle, FileClock, Menu, MessagesSquare } from 'lucide-react';
+import Link from 'next/link';
 
 export function Header() {
   return (
-    <header className="bg-accent fixed top-0 flex w-full items-center justify-between p-4">
+    <header className="bg-accent fixed top-0 z-20 flex w-full items-center justify-between p-4">
       <div className="flex items-center gap-4">
         <Image
           src="/logo.svg"
@@ -46,26 +42,39 @@ export function Header() {
                   <AuthStatus />
                 </SheetTitle>
               </SheetHeader>
-              <div className="mt-10">
-                <ul className="ml-5 space-y-4 text-2xl">
-                  <li className="flex cursor-pointer items-center gap-2 hover:underline">
-                    <FileClock />
-                    <span className="ml-2">Time Table</span>
-                  </li>
-                  <li className="flex cursor-pointer items-center gap-2 hover:underline">
-                    <MessagesSquare />
-                    <span className="ml-2">Chat</span>
-                  </li>
-                  <li className="flex cursor-pointer items-center gap-2 hover:underline">
-                    <AlertTriangle />
-                    <span className="ml-2">Alerts</span>
-                  </li>
-                </ul>
-                <span className="absolute bottom-0 mb-5 flex">
-                  <MapPin />
-                  <span className="ml-2">[Current Vehicle or Stop]</span>
-                </span>
-              </div>
+              <SheetDescription className="mt-10" asChild>
+                <div>
+                  <ul className="ml-8 space-y-4 text-2xl">
+                    <li>
+                      <Link
+                        href="/time-table"
+                        className="flex cursor-pointer items-center gap-2 hover:underline"
+                      >
+                        <FileClock />
+                        <span className="ml-2">Time Table</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/chat"
+                        className="flex cursor-pointer items-center gap-2 hover:underline"
+                      >
+                        <MessagesSquare />
+                        <span className="ml-2">Chat</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/alerts"
+                        className="flex cursor-pointer items-center gap-2 hover:underline"
+                      >
+                        <AlertTriangle />
+                        <span className="ml-2">Alerts</span>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </SheetDescription>
             </SheetContent>
           </Sheet>
         </nav>

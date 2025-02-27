@@ -17,7 +17,7 @@ function AvatarDropdown({ session }: { session: Session }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar className="size-10">
+        <Avatar className="size-9">
           <AvatarImage src={session?.user?.image || ''} />
           <AvatarFallback>
             {session?.user?.name?.charAt(0).toUpperCase() || '?'}
