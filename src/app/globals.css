@@ -92,7 +92,9 @@
   /* Animations */
   --animate-slide-in: slide-in 0.5s ease-in-out;
   --animate-fade-in: fade-in 0.5s ease-in-out;
+  --animate-float: float 3s ease-in-out infinite;
 
+  /* Slide in animation */
   @keyframes slide-in {
     0% {
       transform: translateX(-10px);
@@ -105,6 +107,7 @@
     }
   }
 
+  /* Fade in animation */
   @keyframes fade-in {
     0% {
       opacity: 0;
@@ -114,29 +117,29 @@
       opacity: 1;
     }
   }
-}
 
-/* Float animations for lucide icons */
-@keyframes float {
-  0% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  25% {
-    transform: translateY(-4px) rotate(-2deg);
-  }
-  50% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  75% {
-    transform: translateY(4px) rotate(2deg);
-  }
-  100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-}
+  /* Float animations for lucide icons */
+  @keyframes float {
+    0% {
+      transform: translateY(0px) rotate(0deg);
+    }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+    25% {
+      transform: translateY(-4px) rotate(-2deg);
+    }
+
+    50% {
+      transform: translateY(0px) rotate(0deg);
+    }
+
+    75% {
+      transform: translateY(4px) rotate(2deg);
+    }
+
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+  }
 }
 
 @layer base {

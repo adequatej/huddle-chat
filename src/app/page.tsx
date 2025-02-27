@@ -6,6 +6,7 @@ import {
   FileClock,
   MessagesSquare,
   ArrowRight,
+  ChevronRight,
 } from 'lucide-react';
 import { auth } from './auth';
 import Image from 'next/image';
@@ -50,22 +51,20 @@ export default async function Home() {
       <Header />
       {/* Desktop landing */}
       <section className="relative hidden md:block">
-        <div className="bg-secondary/95 text-secondary-foreground hover:bg-secondary/90 group mt-10 hidden h-[600px] w-1/2 max-w-2xl rounded-tr-[40%] rounded-br-[40%] px-10 backdrop-blur-sm transition-all duration-500 md:flex md:flex-col md:items-start md:justify-center">
+        <div className="bg-secondary text-secondary-foreground group mt-10 hidden h-[600px] w-1/2 max-w-2xl rounded-tr-[40%] rounded-br-[40%] px-10 duration-500 md:flex md:flex-col md:items-start md:justify-center">
           <div className="relative">
             <Image
               src="/logo.svg"
               alt="Logo"
-              className="animate-slide-in mb-2 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
+              className="animate-slide-in mb-2 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-2"
               width={100}
               height={100}
             />
-            <div className="bg-secondary/20 absolute inset-0 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100" />
           </div>
           <h1 className="animate-slide-in relative text-6xl font-bold tracking-tight">
             Huddle Chat
-            <div className="bg-secondary/20 absolute -inset-x-6 -inset-y-3 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100" />
           </h1>
-          <p className="animate-slide-in my-8 max-w-md text-lg leading-relaxed opacity-90 transition-opacity delay-100 duration-500 group-hover:opacity-100">
+          <p className="animate-slide-in my-8 max-w-md text-lg leading-relaxed transition-opacity delay-100 duration-500">
             A chat app for commuters to chat with others in the same station or
             train. Connect, share, and make your commute more engaging.
           </p>
@@ -89,7 +88,7 @@ export default async function Home() {
             >
               <Link href="/signin" className="flex items-center gap-2">
                 Get Started
-                <ArrowRight className="size-5 transition-transform duration-500 group-hover/btn:translate-x-1" />
+                <ChevronRight className="size-5 transition-transform duration-500 group-hover/btn:translate-x-1" />
                 <div className="absolute inset-0 bg-white/20 opacity-0 blur-xl transition-opacity duration-500 group-hover/btn:opacity-100" />
               </Link>
             </Button>
@@ -103,11 +102,11 @@ export default async function Home() {
           objectPosition="center"
           className="absolute -z-10 scale-100 transition-transform duration-700 group-hover:scale-105"
         />
-        <div className="from-background/80 via-background/50 absolute inset-0 -z-10 bg-gradient-to-r to-transparent" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/40 via-black/20 to-transparent" />
       </section>
 
       {/* Mobile landing */}
-      <section className="bg-secondary mt-16 flex flex-col items-center gap-6 rounded-br-[2.5rem] rounded-bl-[2.5rem] px-6 py-8 md:hidden">
+      <section className="bg-secondary mt-16 flex flex-col items-center gap-6 rounded-br-[2.5rem] rounded-bl-[2.5rem] px-6 py-10 md:hidden">
         <div className="flex flex-col items-center">
           <Image
             src="/logo.svg"
@@ -242,9 +241,12 @@ export default async function Home() {
         >
           <h1 className="text-2xl font-bold">Features</h1>
 
-          <div className="grid w-full gap-6 px-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="flex w-full flex-col flex-wrap items-center justify-center md:flex-row">
             <FeatureCard
-              icon={<FileClock className="text-background size-6" />}
+              className="w-full max-w-sm basis-1 p-3 sm:basis-1/2 lg:basis-1/3"
+              icon={
+                <FileClock className="text-accent-foreground group-hover:text-secondary-foreground size-6" />
+              }
               title="Time Table"
               description="Real-time schedules and updates"
               features={[
@@ -254,7 +256,10 @@ export default async function Home() {
               ]}
             />
             <FeatureCard
-              icon={<MessagesSquare className="text-background size-6" />}
+              className="w-full max-w-sm basis-1 p-3 sm:basis-1/2 lg:basis-1/3"
+              icon={
+                <MessagesSquare className="text-accent-foreground group-hover:text-secondary-foreground size-6" />
+              }
               title="Chat"
               description="Connect with fellow commuters"
               features={[
@@ -264,7 +269,10 @@ export default async function Home() {
               ]}
             />
             <FeatureCard
-              icon={<AlertTriangle className="text-background size-6" />}
+              className="w-full max-w-sm basis-1 p-3 sm:basis-1/2 lg:basis-1/3"
+              icon={
+                <AlertTriangle className="text-accent-foreground group-hover:text-secondary-foreground size-6" />
+              }
               title="Alerts"
               description="Important MBTA updates"
               features={[

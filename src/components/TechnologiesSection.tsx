@@ -122,14 +122,14 @@ export function TechnologiesSection() {
   return (
     <div className="w-full">
       {/* Category Selector */}
-      <div className="no-scrollbar flex gap-2 overflow-x-auto pb-2">
+      <div className="flex gap-2 overflow-x-auto p-2">
         {technologies.map((tech) => (
           <Badge
             key={tech.category}
             onClick={() => setActiveCategory(tech.category)}
             variant={activeCategory === tech.category ? 'default' : 'outline'}
             className={cn(
-              'cursor-pointer rounded-full px-3 py-1 text-sm',
+              'cursor-pointer rounded-full px-3 py-1 text-sm transition-transform hover:scale-105',
               activeCategory === tech.category &&
                 `bg-${tech.color} text-${tech.color}-foreground`,
             )}
