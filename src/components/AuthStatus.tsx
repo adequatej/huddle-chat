@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
 } from './ui/dropdown-menu';
 import { Session } from 'next-auth';
+import Link from 'next/link';
 
 function AvatarDropdown({ session }: { session: Session }) {
   return (
@@ -26,7 +27,9 @@ function AvatarDropdown({ session }: { session: Session }) {
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Settings</DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/preferences">Preferences</Link>
+        </DropdownMenuItem>
         <DropdownMenuItem variant={'destructive'} onSelect={() => signOut()}>
           Sign Out
         </DropdownMenuItem>

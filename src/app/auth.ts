@@ -4,6 +4,7 @@ import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import GitHub from 'next-auth/providers/github';
 import type { Provider } from 'next-auth/providers';
+import { updateUserPreferences, getUserByEmail } from '@/lib/user';
 
 const providers: Provider[] = [Google, GitHub];
 
@@ -23,5 +24,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers,
   pages: {
     signIn: '/signin',
+  },
+  events: {
+    createUser: async ({ user }) => {
+      // Update the Auth.js user with our custom fields
+      await updateUserPreferences(user.email!, {
+        notifications: true,
+        onboarded: false, // New users start as not onboarded
+      });
+    },
+  },
+  callbacks: {
+    // Add user ID to session
+    async session({ session }) {
+      const existingUser = await getUserByEmail(session.user.email!);
+
+      if (existingUser) {
+        session.user.id = existingUser._id?.toString();
+        // Add onboarded status to session
+        session.user.onboarded = existingUser.preferences?.onboarded ?? false;
+      }
+
+      return session;
+    },
   },
 });
