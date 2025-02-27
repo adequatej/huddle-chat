@@ -153,8 +153,8 @@ export default async function Home() {
         </div>
       </section>
 
-      <main className="m-auto my-10 flex max-w-xl flex-col items-center gap-8 sm:items-start md:max-w-[1000px] xl:max-w-[1300px]">
-        <div className="flex w-full flex-col items-start gap-5 md:flex-row">
+      <main className="m-auto my-10 flex max-w-xl flex-col items-center gap-8 sm:items-start md:max-w-[700px] lg:max-w-[1000px] xl:max-w-[1300px]">
+        <div className="flex w-full flex-col items-start gap-5 lg:flex-row">
           {/* About the project */}
           <section id="about" className="flex w-full flex-col gap-4 p-6">
             <h1 className="mb-2 text-2xl font-bold">About the Project</h1>
