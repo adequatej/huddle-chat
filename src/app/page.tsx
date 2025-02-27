@@ -50,7 +50,7 @@ export default async function Home() {
       <Header />
       {/* Desktop landing */}
       <section className="relative hidden md:block">
-        <div className="bg-secondary/95 text-secondary-foreground hover:bg-secondary/90 group mt-10 hidden h-[600px] w-1/2 max-w-2xl rounded-tr-[40%] rounded-br-[40%] px-10 backdrop-blur-sm transition-all duration-500 lg:flex lg:flex-col lg:items-start lg:justify-center">
+        <div className="bg-secondary/95 text-secondary-foreground hover:bg-secondary/90 group mt-10 hidden h-[600px] w-1/2 max-w-2xl rounded-tr-[40%] rounded-br-[40%] px-10 backdrop-blur-sm transition-all duration-500 md:flex md:flex-col md:items-start md:justify-center">
           <div className="relative">
             <Image
               src="/logo.svg"
@@ -202,9 +202,9 @@ export default async function Home() {
                 </Link>
                 .
               </p>
-              <div className="grid grid-cols-3 gap-x-12 gap-y-6">
+              <div className="flex flex-wrap justify-center gap-6">
                 {developers.map((dev) => (
-                  <div key={dev.username} className="flex items-center gap-4">
+                  <div key={dev.username} className="flex items-center gap-3">
                     <Image
                       src={dev.avatar}
                       alt={`${dev.name}`}
