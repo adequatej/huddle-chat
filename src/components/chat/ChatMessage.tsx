@@ -1,22 +1,40 @@
 import { APIMessage } from '@/lib/types/chat';
 import { cn } from '@/lib/utils';
-import { Reply } from 'lucide-react';
+import { Reply, SmilePlus } from 'lucide-react';
 import { User } from 'next-auth';
 import { ReactionBadge } from '../ReactionBadge';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import { Card } from '../ui/card';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from '../ui/context-menu';
 
 // Individual chat bubbles
 export default function ChatMessage({
   user,
   message,
+  replyToMessage,
   replyMessage,
 }: {
   user: User;
   message: APIMessage;
+  replyToMessage: () => void;
   replyMessage?: APIMessage;
 }) {
   const messageOwner = user.id === message.user.id; // This will not work until this branch is merged with feature/register
+
+  // React to a message
+  const reactToMessage = (reaction: string) => {
+    throw new Error(`Not implemented: Reacting to a message with ${reaction}`);
+  };
 
   return (
     <div
@@ -57,20 +75,83 @@ export default function ChatMessage({
             )}
           </Card>
         )}
-        <div
-          className={cn(
-            'bg-accent max-w-lg rounded-md p-2 break-words',
-            messageOwner ? 'text-right' : 'text-left',
-          )}
-        >
-          <p className="text-md font-bold">{message.user.name}</p>
-          <p>{message.message}</p>
 
-          {/* This might be something for a <ContextMenu /> */}
-          {/* <div className="font-foreground text-xs opacity-75">
-            {new Date(message.timestamp).toLocaleString()}
-          </div> */}
-        </div>
+        {/* Main message bubble */}
+        <ContextMenu>
+          <ContextMenuTrigger>
+            <div
+              className={cn(
+                'bg-accent max-w-lg rounded-md p-2 break-words',
+                messageOwner ? 'text-right' : 'text-left',
+              )}
+            >
+              <p className="text-md font-bold">{message.user.name}</p>
+              <p>{message.message}</p>
+            </div>
+          </ContextMenuTrigger>
+          <ContextMenuContent
+            className="text-popover-foreground"
+            onSelect={console.log}
+          >
+            <ContextMenuLabel className="text-inherit">
+              {new Date(message.timestamp).toLocaleString()}
+            </ContextMenuLabel>
+            <ContextMenuSeparator />
+            <ContextMenuItem
+              className="text-popover-foreground hover:text-accent-foreground"
+              onClick={replyToMessage}
+            >
+              <Reply className="mr-2 text-inherit" />
+              Reply
+            </ContextMenuItem>
+            <ContextMenuSub>
+              <ContextMenuSubTrigger>
+                <SmilePlus className="mr-2" />
+                React
+              </ContextMenuSubTrigger>
+              <ContextMenuSubContent>
+                <ContextMenuItem
+                  className="text-xl"
+                  onClick={() => reactToMessage('👍')}
+                >
+                  👍 <span className="text-base">- Like</span>
+                </ContextMenuItem>
+                <ContextMenuItem
+                  className="text-xl"
+                  onClick={() => reactToMessage('❤️')}
+                >
+                  ❤️ <span className="text-base">- Love</span>
+                </ContextMenuItem>
+                <ContextMenuItem
+                  className="text-xl"
+                  onClick={() => reactToMessage('😂')}
+                >
+                  😂 <span className="text-base">- Funny</span>
+                </ContextMenuItem>
+                <ContextMenuItem
+                  className="text-xl"
+                  onClick={() => reactToMessage('😮')}
+                >
+                  😮 <span className="text-base">- Woah</span>
+                </ContextMenuItem>
+                <ContextMenuItem
+                  className="text-xl"
+                  onClick={() => reactToMessage('😢')}
+                >
+                  😢 <span className="text-base">- Sad</span>
+                </ContextMenuItem>
+                <ContextMenuItem
+                  className="text-xl"
+                  onClick={() => reactToMessage('😡')}
+                >
+                  😡 <span className="text-base">- Angry</span>
+                </ContextMenuItem>
+              </ContextMenuSubContent>
+            </ContextMenuSub>
+            <ContextMenuSeparator />
+            <ContextMenuItem variant="destructive">Report</ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
 
         {/* Reactions */}
         <div className="flex items-center gap-1">

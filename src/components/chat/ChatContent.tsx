@@ -1,10 +1,12 @@
+'use client';
 import { Chat, APIMessage } from '@/lib/types/chat';
 import { User } from 'next-auth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { SidebarInset, SidebarTrigger } from '../ui/sidebar';
 import ChatBox from './ChatBox';
 import ChatMessage from './ChatMessage';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 // Main inset section for chat content
 export default function ChatContent({
@@ -14,18 +16,36 @@ export default function ChatContent({
   user: User;
   selectedChat: Chat | null;
 }) {
+  const [replyMessage, setReplyMessage] = useState<APIMessage>();
+
   const sendMessage = (message: string, replyId?: string) => {
+    setReplyMessage(undefined); // Clear reply message
+
     const chatId = selectedChat?.chatId;
     const userId = user.id; // This will not work until this branch is merged with feature/register
 
     // Send the message
     console.table({ chatId, userId, message, replyId });
+
+    throw new Error('Not implemented: Sending a message');
   };
 
   // Scroll to the bottom of the chat
   useEffect(() => {
     window.scrollTo(0, document.body.scrollHeight);
   }, [selectedChat]);
+
+  // Detect escape key to clear reply message
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setReplyMessage(undefined);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <SidebarInset className="relative">
@@ -35,15 +55,25 @@ export default function ChatContent({
           {selectedChat?.chatId || 'Chat'}
         </h1>
       </div>
-      <div className="mt-10 mb-15 flex w-full flex-col gap-6 overflow-scroll p-5">
+      <div
+        className={cn(
+          'mt-10 flex w-full flex-col gap-6 overflow-scroll p-5',
+          replyMessage ? 'mb-35' : 'mb-15',
+        )}
+      >
         {selectedChat ? (
           <>
-            <ChatBox sendMessage={sendMessage} />
+            <ChatBox
+              sendMessage={sendMessage}
+              replyMessage={replyMessage}
+              closeReply={() => setReplyMessage(undefined)}
+            />
             {selectedChat.messages.map((message: APIMessage) => (
               <ChatMessage
                 key={message.messageId}
                 user={user}
                 message={message}
+                replyToMessage={() => setReplyMessage(message)}
                 replyMessage={selectedChat.messages.find(
                   (m) => m.messageId === message.replyId,
                 )}
