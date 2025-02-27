@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { User } from 'next-auth';
 
 type SimpleMessage = {
@@ -12,8 +13,10 @@ export type ChatPostBody = SimpleMessage & {
 };
 
 export type MongoDBChatMessage = ChatPostBody & {
+  _id?: ObjectId; // When requesting from MongoDB
   messageId?: string;
   timestamp: number;
+  user?: User & { _id: ObjectId }; // Part of aggregation (Replace with new user type from register)
   userId: string;
   reported: boolean; // Whether the message has been reported
 };
