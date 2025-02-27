@@ -129,7 +129,7 @@ export function TechnologiesSection() {
             onClick={() => setActiveCategory(tech.category)}
             variant={activeCategory === tech.category ? 'default' : 'outline'}
             className={cn(
-              'cursor-pointer rounded-full px-3 py-1 text-sm transition-transform hover:scale-105',
+              'cursor-pointer rounded-full px-3 py-1 text-sm hover:scale-105 motion-safe:transition-transform',
               activeCategory === tech.category &&
                 `bg-${tech.color} text-${tech.color}-foreground`,
             )}
@@ -141,13 +141,13 @@ export function TechnologiesSection() {
 
       {/* Technology carousel */}
       <Carousel className="mx-8">
-        <CarouselContent className="flex gap-4 p-4">
+        <CarouselContent className="flex gap-3 p-5">
           {technologies
             .find((tech) => tech.category === activeCategory)
             ?.items.map((tool) => (
               <CarouselItem
                 key={tool.name}
-                className="flex max-w-40 cursor-pointer flex-col items-center gap-3 rounded-lg border px-2 py-4 transition-transform hover:scale-105"
+                className="flex max-w-40 cursor-pointer flex-col items-center gap-3 rounded-lg border px-2 py-4 hover:scale-105 motion-safe:transition-transform"
                 onClick={() => window.open(tool.url, '_blank')}
               >
                 <div

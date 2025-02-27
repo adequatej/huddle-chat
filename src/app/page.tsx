@@ -51,20 +51,20 @@ export default async function Home() {
       <Header />
       {/* Desktop landing */}
       <section className="relative hidden md:block">
-        <div className="bg-secondary text-secondary-foreground group mt-10 hidden h-[600px] w-1/2 max-w-2xl rounded-tr-[40%] rounded-br-[40%] px-10 duration-500 md:flex md:flex-col md:items-start md:justify-center">
+        <div className="bg-secondary text-secondary-foreground group mt-10 hidden h-[600px] w-1/2 max-w-2xl rounded-tr-[40%] rounded-br-[40%] px-10 md:flex md:flex-col md:items-start md:justify-center">
           <div className="relative">
             <Image
               src="/logo.svg"
               alt="Logo"
-              className="animate-slide-in mb-2 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-2"
+              className="motion-safe:animate-slide-in mb-2 duration-500 motion-safe:transition-transform motion-safe:group-hover:scale-105 motion-safe:group-hover:rotate-2"
               width={100}
               height={100}
             />
           </div>
-          <h1 className="animate-slide-in relative text-6xl font-bold tracking-tight">
+          <h1 className="motion-safe:animate-slide-in relative text-6xl font-bold tracking-tight">
             Huddle Chat
           </h1>
-          <p className="animate-slide-in my-8 max-w-md text-lg leading-relaxed transition-opacity delay-100 duration-500">
+          <p className="motion-safe:animate-slide-in my-8 max-w-md text-lg leading-relaxed delay-500">
             A chat app for commuters to chat with others in the same station or
             train. Connect, share, and make your commute more engaging.
           </p>
@@ -72,24 +72,24 @@ export default async function Home() {
             <Button
               asChild
               size={'lg'}
-              className="animate-fade-in group/btn relative overflow-hidden delay-200"
+              className="motion-safe:animate-fade-in group/btn relative overflow-hidden delay-200"
             >
               <Link href="/chat" className="flex items-center gap-2">
                 Start Chatting
-                <MessagesSquare className="size-5 transition-transform duration-500 group-hover/btn:rotate-12" />
-                <div className="absolute inset-0 bg-white/20 opacity-0 blur-xl transition-opacity duration-500 group-hover/btn:opacity-100" />
+                <MessagesSquare className="size-5 group-hover/btn:rotate-8 motion-safe:transition-transform motion-safe:duration-500" />
+                <div className="absolute inset-0" />
               </Link>
             </Button>
           ) : (
             <Button
               asChild
               size={'lg'}
-              className="animate-fade-in group/btn relative overflow-hidden delay-200"
+              className="motion-safe:animate-fade-in group/btn relative overflow-hidden delay-200"
             >
               <Link href="/signin" className="flex items-center gap-2">
                 Get Started
-                <ChevronRight className="size-5 transition-transform duration-500 group-hover/btn:translate-x-1" />
-                <div className="absolute inset-0 bg-white/20 opacity-0 blur-xl transition-opacity duration-500 group-hover/btn:opacity-100" />
+                <ChevronRight className="size-5 group-hover/btn:translate-x-1 motion-safe:transition-transform motion-safe:duration-500" />
+                <div className="absolute inset-0" />
               </Link>
             </Button>
           )}
@@ -100,7 +100,7 @@ export default async function Home() {
           layout="fill"
           objectFit="cover"
           objectPosition="center"
-          className="absolute -z-10 scale-100 transition-transform duration-700 group-hover:scale-105"
+          className="absolute -z-10 scale-100 duration-700 group-hover:scale-105 motion-safe:transition-transform"
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/40 via-black/20 to-transparent" />
       </section>
@@ -111,7 +111,7 @@ export default async function Home() {
           <Image
             src="/logo.svg"
             alt="Logo"
-            className="animate-slide-in -mt-4 mb-6 transition-transform duration-500"
+            className="motion-safe:animate-slide-in -mt-4 mb-6 duration-500 motion-safe:transition-transform"
             width={70}
             height={70}
             priority
