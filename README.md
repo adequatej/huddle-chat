@@ -55,7 +55,8 @@ Deploy your app, in the form of a webpage, to Glitch, Vercel, AWS, Heroku or som
     - [Get Array of Nearest Stops](#get-array-of-nearest-stops)
     - [Get Array of Nearest Vehicles](#get-array-of-nearest-vehicles)
   - [Chat](#chat)
-    - [Get Chat Messages](#get-chat-messages)
+    - [Get User's Chat Messages](#get-users-chat-messages)
+    - [Get Chat Messages by Chat ID](#get-chat-messages-by-chat-id)
     - [Send Chat Message](#send-chat-message)
     - [Send Chat Reply](#send-chat-reply)
     - [Send Chat Reaction](#send-chat-reaction)
@@ -141,6 +142,14 @@ AUTH_GOOGLE_ID="" # your google id
 AUTH_GOOGLE_SECRET="" # your google secret
 ```
 
+# Features
+
+## Chat History
+
+- When a user sends a message, messages are saved in the chats collection with userId, chatId, and timestamp.
+- When retriving chat history, all messages are retrieved and joins w/ user data
+- Then messages are formatted and grouped by chat room (chatId)
+
 ## API Docs
 
 ### MBTA
@@ -148,6 +157,8 @@ AUTH_GOOGLE_SECRET="" # your google secret
 > #### Get Array of Nearest Stops
 >
 > `GET` `/api/mbta/nearest-stops`
+>
+> _Requires Authentication_
 >
 > **Parameters**
 > | Name | Required | Data Type | Description |
@@ -180,6 +191,8 @@ AUTH_GOOGLE_SECRET="" # your google secret
 > #### Get Array of Nearest Vehicles
 >
 > `GET` `/api/mbta/nearest-vehicles`
+>
+> _Requires Authentication_
 >
 > **Parameters**
 > | Name | Required | Data Type | Description |
@@ -214,9 +227,11 @@ AUTH_GOOGLE_SECRET="" # your google secret
 
 ### Chat
 
-> #### Get Chat Messages
+> #### Get User's Chat Messages
 >
 > `GET` `/api/chat`
+>
+> _Requires Authentication_
 >
 > **Response**
 >
@@ -254,9 +269,51 @@ AUTH_GOOGLE_SECRET="" # your google secret
 > ]
 > ```
 
+> #### Get Chat Messages by Chat ID
+>
+> `GET` `/api/chat/<chatId>`
+>
+> _Requires Authentication_
+>
+> **Response**
+>
+> ```json
+> {
+>   "chatId": "test",
+>   "chatType": "stop",
+>   "messages": [
+>     {
+>       "messageId": "67ba072a59f64d1a5a286bb8",
+>       "message": "Wow that's pretty neat",
+>       "reactions": {},
+>       "timestamp": 1740244778845,
+>       "user": {
+>         "id": "67be4da06911c1b78d81a327",
+>         "name": "Daniel",
+>         "image": "https://avatars.githubusercontent.com/u/20031472?v=4"
+>       }
+>     },
+>     {
+>       "messageId": "67ba0e0f59f64d1a5a286bbb",
+>       "message": "Yes, I am replying to my own message",
+>       "reactions": { "❤️": 1 },
+>       "replyId": "67ba072a59f64d1a5a286bb8",
+>       "timestamp": 1740246543780,
+>       "user": {
+>         "id": "67be4da06911c1b78d81a327",
+>         "name": "Daniel",
+>         "image": "https://avatars.githubusercontent.com/u/20031472?v=4"
+>       }
+>     }
+>   ]
+> }
+> ```
+
 > #### Send Chat Message
 >
 > `POST` `/api/chat`
+>
+> _Requires Authentication_
 >
 > **Body**
 >
@@ -276,6 +333,8 @@ AUTH_GOOGLE_SECRET="" # your google secret
 >
 > `POST` `/api/chat`
 >
+> _Requires Authentication_
+>
 > **Body**
 >
 > ```json
@@ -294,6 +353,8 @@ AUTH_GOOGLE_SECRET="" # your google secret
 > #### Send Chat Reaction
 >
 > `POST` `/api/chat`
+>
+> _Requires Authentication_
 >
 > **Body**
 >
