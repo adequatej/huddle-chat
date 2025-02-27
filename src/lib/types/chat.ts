@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { User } from 'next-auth';
+import { PublicUser, User } from './user';
 
 type SimpleMessage = {
   message?: string;
@@ -16,7 +16,7 @@ export type MongoDBChatMessage = ChatPostBody & {
   _id?: ObjectId; // When requesting from MongoDB
   messageId?: string;
   timestamp: number;
-  user?: User & { _id: ObjectId }; // Part of aggregation (Replace with new user type from register)
+  user?: User; // Part of aggregation
   userId: string;
   reported: boolean; // Whether the message has been reported
 };
@@ -24,7 +24,7 @@ export type MongoDBChatMessage = ChatPostBody & {
 export type ChatMessage = ChatPostBody & {
   messageId: string;
   timestamp: number;
-  user: User;
+  user: PublicUser;
   reported: boolean; // Whether the message has been reported
 };
 
@@ -36,7 +36,7 @@ export type APIMessage = {
   reactions: Reactions;
   replyId?: string;
   timestamp: number;
-  user: User;
+  user: PublicUser;
 };
 
 export type Chat = {

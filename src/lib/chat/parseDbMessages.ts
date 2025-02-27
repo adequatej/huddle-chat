@@ -12,7 +12,7 @@ export default function parseDbMessages(dbMessages: MongoDBChatMessage[]) {
       replyId: message.replyId || undefined,
       timestamp: message.timestamp,
       user: {
-        id: message.user?._id.toString(),
+        id: message.user?._id?.toString(),
         name: message.user?.name,
         image: message.user?.image,
       },

@@ -12,13 +12,13 @@ import { Button } from '@/components/ui/button';
 import { Send, Loader2, Reply } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Header } from '@/components/Header';
-import { User } from 'next-auth';
 import { cn } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { APIMessage, Chat } from '@/lib/types/chat';
 import { ReactionBadge } from '@/components/ReactionBadge';
 import { Card } from '@/components/ui/card';
+import { User } from '@/lib/types/user';
 
 // Individual chat bubbles
 function ChatMessage({
@@ -30,7 +30,6 @@ function ChatMessage({
   message: APIMessage;
   replyMessage?: APIMessage;
 }) {
-  user.id = '67be4da06911c1b78d81a327'; // Temp to test messageOwner
   const messageOwner = user.id === message.user.id; // This will not work until this branch is merged with feature/register
 
   return (
@@ -214,6 +213,7 @@ function ChatContent({
 export default function ChatPage() {
   // Check for sign in status and user
   const { data: session } = useSession();
+  const user = session?.user as User;
 
   // If the user is not signed in, redirect to the sign in page
   useEffect(() => {
@@ -226,7 +226,7 @@ export default function ChatPage() {
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
 
   // If the session is not loaded, show a loading spinner
-  if (!session?.user) {
+  if (!user) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Header />
@@ -243,7 +243,7 @@ export default function ChatPage() {
           selectedChat={selectedChat}
           setSelectedChat={setSelectedChat}
         />
-        <ChatContent user={session?.user} selectedChat={selectedChat} />
+        <ChatContent user={user} selectedChat={selectedChat} />
       </SidebarProvider>
     </>
   );
