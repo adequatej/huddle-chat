@@ -12,7 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 
-// Mock data for demonstration before we get the real data
+// Mock data for demonstration before we get the real data w/ Backend
 const mockTrains = [
   {
     id: '1',
