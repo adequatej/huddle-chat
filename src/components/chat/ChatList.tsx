@@ -8,6 +8,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from '../ui/sidebar';
+import friendlyName from '@/lib/friendlyName';
 
 export default function ChatList({
   chats,
@@ -42,7 +43,7 @@ export default function ChatList({
                 <div className="flex-1 space-y-1">
                   <div className="flex w-full justify-between">
                     <h4 className="space-y-1 text-sm font-semibold">
-                      {item.chatId}
+                      {friendlyName(item.chatId)}
                     </h4>
                     <span className="text-foreground/75 space-y-1 text-xs">
                       31 Minutes Ago

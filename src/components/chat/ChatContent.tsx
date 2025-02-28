@@ -7,6 +7,7 @@ import ChatBox from './ChatBox';
 import ChatMessage from './ChatMessage';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import friendlyName from '@/lib/friendlyName';
 
 // Main inset section for chat content
 export default function ChatContent({
@@ -52,7 +53,7 @@ export default function ChatContent({
       <SidebarTrigger className="fixed z-10 m-3 scale-130" />
       <div className="relative w-full">
         <h1 className="bg-background fixed z-[5] w-full py-2.5 pl-16 text-2xl font-bold">
-          {selectedChat?.chatId || 'Chat'}
+          {selectedChat?.chatId ? friendlyName(selectedChat?.chatId) : 'Chat'}
         </h1>
       </div>
       <div
