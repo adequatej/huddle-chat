@@ -1,7 +1,7 @@
 import { TrainSchedule } from '@/components/TrainSchedule';
 import { Header } from '@/components/Header';
 
-// Will change to replicate mockup better 
+// Will change to replicate mockup better
 export default function TimeTablePage() {
   return (
     <>
