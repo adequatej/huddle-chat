@@ -165,6 +165,10 @@ export function cacheData(path: string, data: object, userId?: string) {
       // Default stale time for stops
       cacheData.staleTime = 1000 * 60 * 60 * 5; // 5 hours
       break;
+    case 'alerts':
+      cacheData.staleTime = 1000 * 60; // 1 minute
+      break;
+
     default:
       break;
   }
