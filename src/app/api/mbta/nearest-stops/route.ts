@@ -29,11 +29,13 @@ export async function GET(req: NextRequest) {
     // - limit to 5 stops
     // - route type is commuter rail
     // - latitude and longitude are set
+    console.log('Fetching MBTA stops...');
     const nearestStops = await requestMbta(
       `/stops?page[limit]=5&filter[latitude]=${lat}&filter[longitude]=${lon}&filter[radius]=0.01&filter[route_type]=2`,
       session.user,
     );
 
+    console.log('MBTA API Response:', nearestStops);
     // Sort commuter trains by distance
     const sortedStops = await getStopsSortedByDistance(nearestStops, {
       lat,
