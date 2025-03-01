@@ -23,6 +23,8 @@ import {
   Users,
   ArrowLeftRight,
   User,
+  RefreshCcw,
+  Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -127,6 +129,26 @@ export function TrainSchedule() {
   >(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('all');
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  // Function to format countdown for real time
+  const getCountdown = (timeString: string) => {
+    const time = new Date();
+    const [hours, minutes] = timeString.split(':');
+    time.setHours(parseInt(hours), parseInt(minutes), 0);
+    const diff = time.getTime() - new Date().getTime();
+    if (diff < 0) return 'Departed';
+    const minutesLeft = Math.floor(diff / 1000 / 60);
+    if (minutesLeft < 60) return `${minutesLeft}m`;
+    return `${Math.floor(minutesLeft / 60)}h ${minutesLeft % 60}m`;
+  };
+
+  // Simulate real-time updates
+  const refreshData = () => {
+    setLastUpdated(new Date());
+    // For benson to fetch new data from api
+  };
 
   const filteredTrains = mockTrains.filter((train) => {
     const matchesSearch =
@@ -184,7 +206,7 @@ export function TrainSchedule() {
   if (selectedTrain) {
     return (
       <div className="mt-20 space-y-6">
-        {/* Navigation Breadcrumb */}
+        {/* Navigation */}
         <div className="bg-background sticky top-20 z-10 pb-4">
           <div className="flex items-center gap-2 text-sm">
             <Button
@@ -341,7 +363,23 @@ export function TrainSchedule() {
       {/* Header and Search */}
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-3xl font-bold tracking-tight">Train Schedule</h2>
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight">
+              Train Schedule
+            </h2>
+            <p className="text-muted-foreground flex items-center gap-2 text-sm">
+              Last updated: {lastUpdated.toLocaleTimeString()}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={refreshData}
+                className="gap-2"
+              >
+                <RefreshCcw className="h-4 w-4" />
+                Refresh
+              </Button>
+            </p>
+          </div>
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
@@ -390,11 +428,13 @@ export function TrainSchedule() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[30px]"></TableHead>
               <TableHead>Train</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Current Location</TableHead>
               <TableHead>Destination</TableHead>
               <TableHead>Arrival</TableHead>
+              <TableHead>Time Until</TableHead>
               <TableHead>Capacity</TableHead>
               <TableHead>Status</TableHead>
             </TableRow>
@@ -406,6 +446,30 @@ export function TrainSchedule() {
                 className="hover:bg-secondary/10 cursor-pointer"
                 onClick={() => setSelectedTrain(train)}
               >
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFavorites((prev) =>
+                        prev.includes(train.id)
+                          ? prev.filter((id) => id !== train.id)
+                          : [...prev, train.id],
+                      );
+                    }}
+                  >
+                    <Star
+                      className={cn(
+                        'h-4 w-4',
+                        favorites.includes(train.id)
+                          ? 'fill-yellow-400 text-yellow-400'
+                          : 'text-muted-foreground',
+                      )}
+                    />
+                  </Button>
+                </TableCell>
                 <TableCell className="font-medium">
                   {train.trainNumber}
                 </TableCell>
@@ -413,6 +477,18 @@ export function TrainSchedule() {
                 <TableCell>{train.currentLocation}</TableCell>
                 <TableCell>{train.destination}</TableCell>
                 <TableCell>{train.arrivalTime}</TableCell>
+                <TableCell>
+                  <span
+                    className={cn(
+                      'text-sm',
+                      train.status === 'Delayed'
+                        ? 'text-destructive'
+                        : 'text-muted-foreground',
+                    )}
+                  >
+                    {getCountdown(train.arrivalTime.split(' ')[0])}
+                  </span>
+                </TableCell>
                 <TableCell>{getCapacityDisplay(train.capacity)}</TableCell>
                 <TableCell>
                   <Badge variant={getStatusColor(train.status)}>
