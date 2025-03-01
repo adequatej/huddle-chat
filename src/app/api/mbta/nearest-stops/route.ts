@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     // - route type is commuter rail
     // - latitude and longitude are set
     const nearestStops = await requestMbta(
-      `/stops?page[limit]=5&filter[latitude]=${lat}&filter[longitude]=${lon}&filter[route_type]=2`,
+      `/stops?page[limit]=5&filter[latitude]=${lat}&filter[longitude]=${lon}&filter[radius]=0.01&filter[route_type]=2`,
       session.user,
     );
 
@@ -49,18 +49,46 @@ export async function GET(req: NextRequest) {
             `/predictions?filter[route_type]=2&filter[stop]=${stop.id}`,
             session.user,
           );
-          return { ...stop, predictions }; // Attach predictions to stop
+
+          const arrivalDepartureTimes =
+            predictions.data?.map(
+              (prediction: {
+                attributes: {
+                  arrival_time: string | null;
+                  departure_time: string | null;
+                };
+              }) => ({
+                arrivalTime: prediction.attributes.arrival_time,
+                departureTime: prediction.attributes.departure_time,
+              }),
+            ) || [];
+
+          return { ...stop, arrivalDepartureTimes };
         } catch (error) {
           console.error(
             `Failed to fetch predictions for stop ${stop.id}:`,
             error,
           );
-          return { ...stop, predictions: [] }; // Return stop with empty predictions instead of crashing
+          return { ...stop, arrivalDepartureTimes: [] };
         }
       }),
     );
 
-    return NextResponse.json(stopsWithPredictions);
+    // Extract only trains that have valid arrival/departure times
+    const currentTrains = stopsWithPredictions.filter(
+      (stop) => stop.arrivalDepartureTimes.length > 0,
+    );
+    const aggregatedTimes = currentTrains.reduce<string[]>((acc, stop) => {
+      acc.push(...stop.arrivalDepartureTimes);
+      return acc;
+    }, []);
+
+    // Return data or a message if no real-time data is found
+    return NextResponse.json(
+      aggregatedTimes.length > 0
+        ? aggregatedTimes
+        : { message: 'No arrival/departure times available' },
+    );
   } catch (error) {
     console.error('Failed to fetch stops:', error);
     return NextResponse.json(
@@ -69,7 +97,7 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
 // get list of routes
-// Get list of
 // cache routes
 // make request to get name of stop
