@@ -129,6 +129,7 @@ export function TrainSchedule() {
   >(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('all');
+  const [showFavorites, setShowFavorites] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [favorites, setFavorites] = useState<string[]>([]);
 
@@ -159,8 +160,9 @@ export function TrainSchedule() {
     const matchesStatus =
       filterStatus === 'all' || train.status === filterStatus;
     const matchesType = filterType === 'all' || train.type === filterType;
+    const matchesFavorites = !showFavorites || favorites.includes(train.id);
 
-    return matchesSearch && matchesStatus && matchesType;
+    return matchesSearch && matchesStatus && matchesType && matchesFavorites;
   });
 
   const getStatusColor = (status: string) => {
@@ -515,6 +517,22 @@ export function TrainSchedule() {
               <SelectItem value="Local">Local</SelectItem>
             </SelectContent>
           </Select>
+
+          <Button
+            variant={showFavorites ? 'secondary' : 'outline'}
+            onClick={() => setShowFavorites(!showFavorites)}
+            className="flex items-center gap-2"
+          >
+            <Star
+              className={cn(
+                'h-4 w-4',
+                showFavorites
+                  ? 'fill-secondary-foreground text-secondary-foreground'
+                  : 'text-muted-foreground',
+              )}
+            />
+            <span>Show Favorites</span>
+          </Button>
         </div>
       </div>
 
