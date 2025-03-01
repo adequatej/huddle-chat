@@ -23,29 +23,53 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Get current commuter trains
-  // Filters:
-  // - limit to 5 stops
-  // - route type is commuter rail
-  // - latitude and longitude are set
-  const nearestStops = await requestMbta(
-    `/stops?page[limit]=5&filter[latitude]=${lat}&filter[longitude]=${lon}&filter[route_type]=2`,
-    session.user,
-  );
+  try {
+    // Get current commuter trains
+    // Filters:
+    // - limit to 5 stops
+    // - route type is commuter rail
+    // - latitude and longitude are set
+    const nearestStops = await requestMbta(
+      `/stops?page[limit]=5&filter[latitude]=${lat}&filter[longitude]=${lon}&filter[route_type]=2`,
+      session.user,
+    );
 
-  // Sort commuter trains by distance
-  const sortedStops = await getStopsSortedByDistance(nearestStops, {
-    lat,
-    lon,
-    acc,
-  });
+    // Sort commuter trains by distance
+    const sortedStops = await getStopsSortedByDistance(nearestStops, {
+      lat,
+      lon,
+      acc,
+    });
 
-  // Return the closest commuter trains, trimming unused data
-  return NextResponse.json(
-    sortedStops.map((train) => ({
-      id: train.id,
-      distance: train.distance,
-      attributes: train.attributes,
-    })),
-  );
+    // Fetch real-time predictions for each stop with error handling
+    const stopsWithPredictions = await Promise.all(
+      sortedStops.map(async (stop) => {
+        try {
+          const predictions = await requestMbta(
+            `/predictions?filter[route_type]=2&filter[stop]=${stop.id}`,
+            session.user,
+          );
+          return { ...stop, predictions }; // Attach predictions to stop
+        } catch (error) {
+          console.error(
+            `Failed to fetch predictions for stop ${stop.id}:`,
+            error,
+          );
+          return { ...stop, predictions: [] }; // Return stop with empty predictions instead of crashing
+        }
+      }),
+    );
+
+    return NextResponse.json(stopsWithPredictions);
+  } catch (error) {
+    console.error('Failed to fetch stops:', error);
+    return NextResponse.json(
+      { error: 'Failed to retrieve train stops. Please try again later.' },
+      { status: 500 },
+    );
+  }
 }
+// get list of routes
+// Get list of
+// cache routes
+// make request to get name of stop
