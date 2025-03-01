@@ -203,6 +203,81 @@ export function TrainSchedule() {
     );
   };
 
+  // To render train info as a card for mobile
+  const renderTrainCard = (train: (typeof mockTrains)[0]) => (
+    <Card
+      key={train.id}
+      className="cursor-pointer p-4"
+      onClick={() => setSelectedTrain(train)}
+    >
+      <div className="flex items-start justify-between">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={(e) => {
+                e.stopPropagation();
+                setFavorites((prev) =>
+                  prev.includes(train.id)
+                    ? prev.filter((id) => id !== train.id)
+                    : [...prev, train.id],
+                );
+              }}
+            >
+              <Star
+                className={cn(
+                  'h-4 w-4',
+                  favorites.includes(train.id)
+                    ? 'fill-yellow-400 text-yellow-400'
+                    : 'text-muted-foreground',
+                )}
+              />
+            </Button>
+            <h3 className="font-medium">{train.trainNumber}</h3>
+            <Badge variant="outline" className="text-xs">
+              {train.type}
+            </Badge>
+          </div>
+          <div className="text-muted-foreground space-y-1 text-sm">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              <span>{train.currentLocation}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Train className="h-4 w-4" />
+              <span>{train.destination}</span>
+            </div>
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="mb-2 font-medium">{train.arrivalTime}</div>
+          <span
+            className={cn(
+              'text-xs',
+              train.status === 'Delayed'
+                ? 'text-destructive'
+                : 'text-muted-foreground',
+            )}
+          >
+            {getCountdown(train.arrivalTime.split(' ')[0])}
+          </span>
+        </div>
+      </div>
+      <div className="mt-4 flex items-center justify-between">
+        <div>{getCapacityDisplay(train.capacity)}</div>
+        <Badge variant={getStatusColor(train.status)}>{train.status}</Badge>
+      </div>
+      {train.alerts.length > 0 && (
+        <div className="text-destructive mt-3 flex items-center gap-2 text-xs">
+          <AlertTriangle className="h-4 w-4" />
+          <span>{train.alerts[0]}</span>
+        </div>
+      )}
+    </Card>
+  );
+
   if (selectedTrain) {
     return (
       <div className="mt-20 space-y-6">
@@ -216,10 +291,10 @@ export function TrainSchedule() {
               className="flex items-center gap-2"
             >
               <ChevronLeft className="h-4 w-4" />
-              Back to Routes
+              <span className="sm:inline">Back to Routes</span>
             </Button>
-            <span className="text-muted-foreground/50">/</span>
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground/50 hidden sm:inline">/</span>
+            <span className="text-muted-foreground hidden sm:inline">
               Stops for {selectedTrain.trainNumber}
             </span>
           </div>
@@ -228,7 +303,7 @@ export function TrainSchedule() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight">
+            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
               {selectedTrain.trainNumber}
             </h2>
             <p className="text-muted-foreground">
@@ -242,8 +317,8 @@ export function TrainSchedule() {
 
         {/* Status Overview */}
         <Card>
-          <div className="p-6">
-            <div className="grid gap-6 md:grid-cols-4">
+          <div className="p-4 sm:p-6">
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
               <div className="flex items-center gap-3">
                 <MapPin className="text-primary h-4 w-4" />
                 <div>
@@ -302,45 +377,68 @@ export function TrainSchedule() {
         )}
 
         {/* Journey Progress */}
-        <div className="relative space-y-4">
+        <div className="relative space-y-2">
           {selectedTrain.stops.map((stop, index) => (
             <Card
               key={index}
               className={cn(
+                'relative',
                 stop.status === 'On Route'
                   ? 'bg-secondary/10 border-secondary'
-                  : '',
-                'relative',
+                  : stop.status === 'Departed'
+                    ? 'opacity-75'
+                    : '',
               )}
             >
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
-                      {stop.location[0]}
-                    </div>
-                    <div>
-                      <h3 className="font-medium">{stop.location}</h3>
-                      <div className="text-muted-foreground flex gap-4 text-sm">
-                        <span>Arrival: {stop.arrival}</span>
-                        <span>Departure: {stop.departure}</span>
-                        <span>Platform: {stop.platform}</span>
+              <div className="p-3 sm:p-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={cn(
+                          'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm sm:h-10 sm:w-10 sm:text-base',
+                          stop.status === 'Departed'
+                            ? 'bg-muted text-muted-foreground'
+                            : 'bg-primary/10 text-primary',
+                        )}
+                      >
+                        <div className="text-xs font-medium">{index + 1}</div>
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="truncate font-medium">
+                          {stop.location}
+                        </h3>
+                        <div className="text-muted-foreground flex flex-col gap-1 text-xs sm:flex-row sm:gap-4 sm:text-sm">
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3 shrink-0 sm:h-4 sm:w-4" />
+                            {stop.arrival} - {stop.departure}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Train className="h-3 w-3 shrink-0 sm:h-4 sm:w-4" />
+                            Platform {stop.platform}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <Badge variant={getStatusColor(stop.status)}>
+                  <Badge
+                    variant={getStatusColor(stop.status)}
+                    className="shrink-0 self-start sm:self-center"
+                  >
                     {stop.status}
                   </Badge>
                 </div>
 
                 {/* Connections */}
                 {stop.connections.length > 0 && (
-                  <div className="text-muted-foreground mt-4 flex items-center gap-2 text-sm">
-                    <ArrowLeftRight className="h-4 w-4" />
-                    <span>Connections:</span>
-                    <div className="flex gap-2">
+                  <div className="text-muted-foreground mt-3 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+                    <div className="flex shrink-0 items-center gap-1">
+                      <ArrowLeftRight className="h-3 w-3 sm:h-4 sm:w-4" />
+                      <span>Connections:</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1 sm:gap-2">
                       {stop.connections.map((connection, idx) => (
-                        <Badge key={idx} variant="outline">
+                        <Badge key={idx} variant="outline" className="text-xs">
                           {connection}
                         </Badge>
                       ))}
@@ -348,9 +446,6 @@ export function TrainSchedule() {
                   </div>
                 )}
               </div>
-              {index < selectedTrain.stops.length - 1 && (
-                <div className="bg-border absolute top-[5.5rem] bottom-0 left-7 w-[2px]" />
-              )}
             </Card>
           ))}
         </div>
@@ -364,7 +459,7 @@ export function TrainSchedule() {
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight">
+            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
               Train Schedule
             </h2>
             <p className="text-muted-foreground flex items-center gap-2 text-sm">
@@ -376,18 +471,18 @@ export function TrainSchedule() {
                 className="gap-2"
               >
                 <RefreshCcw className="h-4 w-4" />
-                Refresh
+                <span className="hidden sm:inline">Refresh</span>
               </Button>
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <div className="relative">
+            <div className="relative flex-1 sm:flex-none">
               <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
               <Input
                 placeholder="Search trains, stations..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-[250px] pl-9"
+                className="w-full pl-9 sm:w-[250px]"
               />
             </div>
             <Button variant="outline" size="icon">
@@ -397,9 +492,9 @@ export function TrainSchedule() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row">
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -411,7 +506,7 @@ export function TrainSchedule() {
           </Select>
 
           <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter by type" />
             </SelectTrigger>
             <SelectContent>
@@ -423,83 +518,89 @@ export function TrainSchedule() {
         </div>
       </div>
 
-      {/* Train List */}
-      <Card>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[30px]"></TableHead>
-              <TableHead>Train</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Current Location</TableHead>
-              <TableHead>Destination</TableHead>
-              <TableHead>Arrival</TableHead>
-              <TableHead>Time Until</TableHead>
-              <TableHead>Capacity</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredTrains.map((train) => (
-              <TableRow
-                key={train.id}
-                className="hover:bg-secondary/10 cursor-pointer"
-                onClick={() => setSelectedTrain(train)}
-              >
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setFavorites((prev) =>
-                        prev.includes(train.id)
-                          ? prev.filter((id) => id !== train.id)
-                          : [...prev, train.id],
-                      );
-                    }}
-                  >
-                    <Star
+      {/* Table for desktop, Cards for mobile */}
+      <div className="hidden sm:block">
+        <Card>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[30px]"></TableHead>
+                <TableHead>Train</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Current Location</TableHead>
+                <TableHead>Destination</TableHead>
+                <TableHead>Arrival</TableHead>
+                <TableHead>Time Until</TableHead>
+                <TableHead>Capacity</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredTrains.map((train) => (
+                <TableRow
+                  key={train.id}
+                  className="hover:bg-secondary/10 cursor-pointer"
+                  onClick={() => setSelectedTrain(train)}
+                >
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setFavorites((prev) =>
+                          prev.includes(train.id)
+                            ? prev.filter((id) => id !== train.id)
+                            : [...prev, train.id],
+                        );
+                      }}
+                    >
+                      <Star
+                        className={cn(
+                          'h-4 w-4',
+                          favorites.includes(train.id)
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-muted-foreground',
+                        )}
+                      />
+                    </Button>
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {train.trainNumber}
+                  </TableCell>
+                  <TableCell>{train.type}</TableCell>
+                  <TableCell>{train.currentLocation}</TableCell>
+                  <TableCell>{train.destination}</TableCell>
+                  <TableCell>{train.arrivalTime}</TableCell>
+                  <TableCell>
+                    <span
                       className={cn(
-                        'h-4 w-4',
-                        favorites.includes(train.id)
-                          ? 'fill-yellow-400 text-yellow-400'
+                        'text-sm',
+                        train.status === 'Delayed'
+                          ? 'text-destructive'
                           : 'text-muted-foreground',
                       )}
-                    />
-                  </Button>
-                </TableCell>
-                <TableCell className="font-medium">
-                  {train.trainNumber}
-                </TableCell>
-                <TableCell>{train.type}</TableCell>
-                <TableCell>{train.currentLocation}</TableCell>
-                <TableCell>{train.destination}</TableCell>
-                <TableCell>{train.arrivalTime}</TableCell>
-                <TableCell>
-                  <span
-                    className={cn(
-                      'text-sm',
-                      train.status === 'Delayed'
-                        ? 'text-destructive'
-                        : 'text-muted-foreground',
-                    )}
-                  >
-                    {getCountdown(train.arrivalTime.split(' ')[0])}
-                  </span>
-                </TableCell>
-                <TableCell>{getCapacityDisplay(train.capacity)}</TableCell>
-                <TableCell>
-                  <Badge variant={getStatusColor(train.status)}>
-                    {train.status}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+                    >
+                      {getCountdown(train.arrivalTime.split(' ')[0])}
+                    </span>
+                  </TableCell>
+                  <TableCell>{getCapacityDisplay(train.capacity)}</TableCell>
+                  <TableCell>
+                    <Badge variant={getStatusColor(train.status)}>
+                      {train.status}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      </div>
+
+      <div className="space-y-4 sm:hidden">
+        {filteredTrains.map(renderTrainCard)}
+      </div>
     </div>
   );
 }
