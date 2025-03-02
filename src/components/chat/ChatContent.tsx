@@ -18,16 +18,30 @@ export default function ChatContent({
 }) {
   const [replyMessage, setReplyMessage] = useState<APIMessage>();
 
-  const sendMessage = (message: string, replyId?: string) => {
-    setReplyMessage(undefined); // Clear reply message
-
+  const sendMessage = async (message: string, replyId?: string) => {
     const chatId = selectedChat?.chatId;
-    const userId = user.id; // This will not work until this branch is merged with feature/register
+    //const userId = user.id;
 
-    // Send the message
-    console.table({ chatId, userId, message, replyId });
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chatId,
+          chatType: 'stop',
+          message,
+          replyId,
+        }),
+      });
 
-    throw new Error('Not implemented: Sending a message');
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
   };
 
   // Scroll to the bottom of the chat
