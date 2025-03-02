@@ -3,6 +3,7 @@ import requestMbta from '@/lib/mbta/request';
 import { getStopsSortedByDistance } from '@/lib/mbta/objectsByDistance';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Define the type for prediction response
 interface Prediction {
   attributes: {
     arrival_time?: string;
@@ -15,12 +16,12 @@ interface Prediction {
 }
 
 export async function GET(req: NextRequest) {
-  // Get long, lat, and acc query parameters
+  // Get lat, lon, and acc from query parameters
   const lon = Number(req.nextUrl.searchParams.get('lon'));
   const lat = Number(req.nextUrl.searchParams.get('lat'));
   const acc = Number(req.nextUrl.searchParams.get('acc'));
 
-  // Check if query parameters are valid
+  // Validate query parameters
   if (!lon || !lat || !acc || isNaN(lon) || isNaN(lat) || isNaN(acc)) {
     return NextResponse.json(
       { error: 'Invalid query parameters' },
@@ -35,41 +36,41 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Get current commuter trains
-    // Filters:
-    // - limit to 5 stops
-    // - route type is commuter rail
-    // - latitude and longitude are set
-    console.log('Fetching MBTA stops...');
+    console.log('🚆 Fetching MBTA Stops...');
+
+    // Fetch nearby commuter rail stops
     const nearestStops = await requestMbta(
       `/stops?page[limit]=5&filter[latitude]=${lat}&filter[longitude]=${lon}&filter[radius]=0.01&filter[route_type]=2`,
       session.user,
     );
 
-    console.log('MBTA API Response:', nearestStops);
-    // Sort commuter trains by distance
+    console.log('✅ MBTA Stops Fetched:', nearestStops);
+
+    // Sort stops by distance
     const sortedStops = await getStopsSortedByDistance(nearestStops, {
       lat,
       lon,
       acc,
     });
 
-    // Fetch real-time predictions for each stop with error handling
+    // Fetch predictions for each stop
     const stopsWithPredictions = await Promise.all(
       sortedStops.map(async (stop) => {
         try {
+          // Fetch train arrival predictions for the stop
           const predictions = await requestMbta(
             `/predictions?filter[route_type]=2&filter[stop]=${stop.id}`,
           );
           const predictionList = Array.isArray(predictions?.data)
             ? predictions.data
-            : predictions; // Ensure it's an array
+            : predictions;
+
           console.log(
-            `🔍 Raw Predictions Response for Stop ${stop.id}:`,
+            `🔍 Predictions for Stop ${stop.id}:`,
             JSON.stringify(predictions, null, 2),
           );
 
-          // Debugging: Log predictions response
+          // Handle case where no trains are scheduled
           if (!predictionList || predictionList.length === 0) {
             console.warn(`⚠️ No predictions found for stop ${stop.id}`);
             return {
@@ -78,11 +79,6 @@ export async function GET(req: NextRequest) {
                 { message: 'No trains currently scheduled' },
               ],
             };
-          } else {
-            console.log(
-              `🚆 Predictions for Stop ${stop.id}:`,
-              JSON.stringify(predictions, null, 2),
-            );
           }
 
           // Extract relevant prediction data
@@ -101,7 +97,7 @@ export async function GET(req: NextRequest) {
           return { ...stop, arrivalDepartureTimes };
         } catch (error) {
           console.error(
-            `Failed to fetch predictions for stop ${stop.id}:`,
+            `❌ Failed to fetch predictions for stop ${stop.id}:`,
             error,
           );
           return { ...stop, arrivalDepartureTimes: [] };
@@ -120,14 +116,10 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(currentTrains);
   } catch (error) {
-    console.error('Failed to retrieve train stops:', error);
+    console.error('❌ Failed to retrieve train stops:', error);
     return NextResponse.json(
       { error: 'Failed to retrieve train stops. Please try again later.' },
       { status: 500 },
     );
   }
 }
-
-// get list of routes
-// cache routes
-// make request to get name of stop
