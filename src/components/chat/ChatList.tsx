@@ -8,9 +8,9 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from '../ui/sidebar';
+import { useEffect, useState } from 'react';
 
 export default function ChatList({
-  chats,
   selectedChat,
   setSelectedChat,
 }: {
@@ -18,9 +18,50 @@ export default function ChatList({
   selectedChat: Chat | null;
   setSelectedChat: (chat: Chat) => void;
 }) {
+  const [fetchedChats, setFetchedChats] = useState<Chat[]>([]);
+  const chatIds = ['test'];
+
+  useEffect(() => {
+    if (chatIds.length === 0) return;
+
+    const eventSources: EventSource[] = [];
+
+    chatIds.forEach((chatId) => {
+      const eventSource = new EventSource(`/api/chat/${chatId}`);
+      eventSource.onmessage = (event) => {
+        const newChat = JSON.parse(event.data);
+        console.log('New chat:', newChat);
+        setFetchedChats((prevChats) => {
+          const existingChatIndex = prevChats.findIndex(
+            (chat) => chat.chatId === newChat.chatId,
+          );
+
+          if (existingChatIndex !== -1) {
+            const updatedChats = [...prevChats];
+            updatedChats[existingChatIndex] = newChat;
+            return updatedChats;
+          } else {
+            return [...prevChats, newChat];
+          }
+        });
+      };
+
+      eventSource.onerror = (err) => {
+        console.error(`SSE error for chatId ${chatId}:`, err);
+        eventSource.close();
+      };
+
+      eventSources.push(eventSource);
+    });
+
+    return () => {
+      eventSources.forEach((es) => es.close());
+    };
+  }, [chatIds]);
+
   return (
     <SidebarMenu>
-      {chats.map((item) => (
+      {fetchedChats.map((item) => (
         <div key={item.chatId}>
           <SidebarSeparator className="bg-accent -translate-x-2" />
           <SidebarMenuItem key={item.chatId} className="mt-1 h-18 min-h-16">
@@ -45,12 +86,10 @@ export default function ChatList({
                       {item.chatId}
                     </h4>
                     <span className="text-foreground/75 space-y-1 text-xs">
-                      31 Minutes Ago
+                      {item.messages[item.messages.length - 1]?.message ||
+                        'No messages'}
                     </span>
                   </div>
-                  <p className="text-sm">
-                    {item.messages[item.messages.length - 1].message}
-                  </p>
                 </div>
               </div>
             </SidebarMenuButton>

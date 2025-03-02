@@ -12,7 +12,7 @@ import { Input } from './ui/input';
 import { History, MapPin } from 'lucide-react';
 import { Chat } from '@/lib/types/chat';
 import ChatList from './chat/ChatList';
-
+/*
 const chatsDummy: Chat[] = [
   {
     chatId: 'Chat 1',
@@ -236,6 +236,7 @@ const chatsDummy: Chat[] = [
     ],
   },
 ];
+*/
 
 export function ChatSidebar({
   selectedChat,
@@ -282,7 +283,7 @@ export function ChatSidebar({
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <ChatList
-              chats={chatsDummy}
+              chats={allChats}
               selectedChat={selectedChat}
               setSelectedChat={setSelectedChat}
             />
