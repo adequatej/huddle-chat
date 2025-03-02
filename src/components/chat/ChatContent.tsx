@@ -57,7 +57,7 @@ export default function ChatContent({
       </div>
       <div
         className={cn(
-          'mt-10 flex w-full flex-col gap-6 overflow-scroll p-5',
+          'mt-10 flex w-full flex-col gap-6 overflow-x-clip overflow-y-scroll p-5',
           replyMessage ? 'mb-35' : 'mb-15',
         )}
       >

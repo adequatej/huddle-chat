@@ -76,7 +76,10 @@ export default function ChatBox({
           variant="secondary"
           size="icon"
           className="absolute"
-          onClick={() => sendMessage(message, replyMessage?.messageId)}
+          onClick={() => {
+            sendMessage(message, replyMessage?.messageId);
+            setMessage('');
+          }}
         >
           <Send />
         </Button>
