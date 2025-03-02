@@ -3,6 +3,17 @@ import requestMbta from '@/lib/mbta/request';
 import { getStopsSortedByDistance } from '@/lib/mbta/objectsByDistance';
 import { NextRequest, NextResponse } from 'next/server';
 
+interface Prediction {
+  attributes: {
+    arrival_time?: string;
+    departure_time?: string;
+  };
+  relationships?: {
+    route?: { data?: { id?: string } };
+    vehicle?: { data?: { id?: string } };
+  };
+}
+
 export async function GET(req: NextRequest) {
   // Get long, lat, and acc query parameters
   const lon = Number(req.nextUrl.searchParams.get('lon'));
@@ -49,21 +60,43 @@ export async function GET(req: NextRequest) {
         try {
           const predictions = await requestMbta(
             `/predictions?filter[route_type]=2&filter[stop]=${stop.id}`,
-            session.user,
+          );
+          const predictionList = Array.isArray(predictions?.data)
+            ? predictions.data
+            : predictions; // Ensure it's an array
+          console.log(
+            `🔍 Raw Predictions Response for Stop ${stop.id}:`,
+            JSON.stringify(predictions, null, 2),
           );
 
-          const arrivalDepartureTimes =
-            predictions.data?.map(
-              (prediction: {
-                attributes: {
-                  arrival_time: string | null;
-                  departure_time: string | null;
-                };
-              }) => ({
-                arrivalTime: prediction.attributes.arrival_time,
-                departureTime: prediction.attributes.departure_time,
-              }),
-            ) || [];
+          // Debugging: Log predictions response
+          if (!predictionList || predictionList.length === 0) {
+            console.warn(`⚠️ No predictions found for stop ${stop.id}`);
+            return {
+              ...stop,
+              arrivalDepartureTimes: [
+                { message: 'No trains currently scheduled' },
+              ],
+            };
+          } else {
+            console.log(
+              `🚆 Predictions for Stop ${stop.id}:`,
+              JSON.stringify(predictions, null, 2),
+            );
+          }
+
+          // Extract relevant prediction data
+          const arrivalDepartureTimes = predictionList.map(
+            (prediction: Prediction) => ({
+              arrivalTime: prediction.attributes?.arrival_time || 'Unknown',
+              departureTime: prediction.attributes?.departure_time || 'Unknown',
+              route:
+                prediction.relationships?.route?.data?.id || 'Unknown Route',
+              vehicle:
+                prediction.relationships?.vehicle?.data?.id ||
+                'No Vehicle Info',
+            }),
+          );
 
           return { ...stop, arrivalDepartureTimes };
         } catch (error) {
@@ -76,23 +109,18 @@ export async function GET(req: NextRequest) {
       }),
     );
 
-    // Extract only trains that have valid arrival/departure times
-    const currentTrains = stopsWithPredictions.filter(
-      (stop) => stop.arrivalDepartureTimes.length > 0,
-    );
-    const aggregatedTimes = currentTrains.reduce<string[]>((acc, stop) => {
-      acc.push(...stop.arrivalDepartureTimes);
-      return acc;
-    }, []);
+    // Filter stops that have real-time arrival/departure data
+    const currentTrains = stopsWithPredictions;
 
-    // Return data or a message if no real-time data is found
-    return NextResponse.json(
-      aggregatedTimes.length > 0
-        ? aggregatedTimes
-        : { message: 'No arrival/departure times available' },
-    );
+    if (currentTrains.length === 0) {
+      return NextResponse.json({
+        message: 'No arrival/departure times available',
+      });
+    }
+
+    return NextResponse.json(currentTrains);
   } catch (error) {
-    console.error('Failed to fetch stops:', error);
+    console.error('Failed to retrieve train stops:', error);
     return NextResponse.json(
       { error: 'Failed to retrieve train stops. Please try again later.' },
       { status: 500 },
