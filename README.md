@@ -174,26 +174,24 @@ AUTH_GOOGLE_SECRET="" # your google secret
 > **Response**
 >
 > ```json
-> [{
->    "id": "1707",
->    "bearing": null,
->    "carriages": [],
->    "current_status": "STOPPED_AT",
->    "current_stop_sequence": 40,
->    "direction_id": 0,
->    "label": "1707",
->    "latitude": 42.52439880371094,
->    "longitude": -70.89594268798828,
->    "occupancy_status": null,
->    "revenue": "REVENUE",
->    "speed": null,
->    "updated_at": "2025-03-03T12:39:51-05:00"
->    },
->    ...
+> [
+>   {
+>     "id": "1707",
+>     "bearing": null,
+>     "current_status": "STOPPED_AT",
+>     "current_stop_sequence": 40,
+>     "direction_id": 0,
+>     "label": "1707",
+>     "latitude": 42.52439880371094,
+>     "longitude": -70.89594268798828,
+>     "speed": 13.2,
+>     "updated_at": "2025-03-03T12:39:51-05:00"
+>   },
+>   ...
 > ]
 > ```
 
-> #### Get Array of Current Vehicles
+> #### Get Stops by Vehicle ID
 >
 > `GET` `/api/mbta/vehicle-stops/<vehicleId>`
 >
@@ -205,47 +203,46 @@ AUTH_GOOGLE_SECRET="" # your google secret
 > **Response**
 >
 > ```json
-> [{
->    "vehicle": {
->        "bearing": null,
->        "carriages": [],
->        "current_status": "STOPPED_AT",
->        "current_stop_sequence": 160,
->        "direction_id": 1,
->        "label": "1833",
->        "latitude": 42.34756851196289,
->        "longitude": -71.07628631591797,
->        "occupancy_status": null,
->        "revenue": "REVENUE",
->        "speed": null,
->        "updated_at": "2025-03-03T13:35:29-05:00"
->    },
->    "currentStop": {
->        "id": "schedule-BaseWML-697684-518-WML-0012-05-160",
->        "arrivalTime": "2025-03-03T13:47:00-05:00",
->        "departureTime": "2025-03-03T13:47:00-05:00",
->        "stopSequence": 160,
->        "name": "Back Bay",
->        "description": "Back Bay - Commuter Rail - Track 5",
->        "municipality": "Boston",
->        "platformName": "Commuter Rail - Track 5",
->        "latitude": 42.34759,
->        "longitude": -71.075393,
->        "wheelchairBoarding": 1
->    },
->    "stops" : {
->        "id": "schedule-BaseWML-697684-518-WML-0442-CS-0",
->        "arrivalTime": null,
->        "departureTime": "2025-03-03T12:05:00-05:00",
->        "stopSequence": 0,
->        "name": "Worcester",
->        "description": "Worcester - Commuter Rail - Track 1 (All Trains)",
->        "municipality": "Worcester",
->        "platformName": "Track 1 (All Trains)",
->        "latitude": 42.261835,
->        "longitude": -71.791806,
->        "wheelchairBoarding": 1
->    },
->    ...
-> ]
+> {
+>   "vehicle": {
+>     "bearing": 213,
+>     "current_status": "IN_TRANSIT_TO",
+>     "current_stop_sequence": 30,
+>     "direction_id": 0,
+>     "label": "1833",
+>     "latitude": 42.31934356689453,
+>     "longitude": -71.1028060913086,
+>     "speed": 31.7,
+>     "updated_at": "2025-03-03T14:17:28-05:00"
+>   },
+>   "currentStop": {
+>     "id": "schedule-SouthWKDYF24-697857-877-NEC-2203-03-30",
+>     "arrivalTime": "2025-03-03T14:21:00-05:00",
+>     "departureTime": "2025-03-03T14:21:00-05:00",
+>     "stopSequence": 30,
+>     "name": "Hyde Park",
+>     "description": "Hyde Park - Commuter Rail - Track 3 (Outbound)",
+>     "municipality": "Boston",
+>     "platformName": "Track 3 (Outbound)",
+>     "latitude": 42.25503,
+>     "longitude": -71.125526,
+>     "wheelchairBoarding": 1
+>   },
+>   "stops": [
+>     {
+>       "id": "schedule-SouthWKDYF24-697857-877-NEC-2276-03-10",
+>       "arrivalTime": "2025-03-03T14:10:00-05:00",
+>       "departureTime": "2025-03-03T14:10:00-05:00",
+>       "stopSequence": 10,
+>       "name": "Back Bay",
+>       "description": "Back Bay - Commuter Rail - Track 3",
+>       "municipality": "Boston",
+>       "platformName": "Commuter Rail - Track 3",
+>       "latitude": 42.347283,
+>       "longitude": -71.075312,
+>       "wheelchairBoarding": 1
+>     },
+>     ...
+>   ]
+> }
 > ```
