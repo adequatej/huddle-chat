@@ -28,7 +28,7 @@ function AvatarDropdown({ session }: { session: Session }) {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/preferences">Preferences</Link>
+          <Link href="/settings">Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuItem variant={'destructive'} onSelect={() => signOut()}>
           Sign Out

@@ -28,3 +28,15 @@ export const updateUserPreferences = async (
   const users = getUsersCollection();
   return users.updateOne({ email }, { $set: { preferences } });
 };
+
+// Update user profile
+export const updateUserProfile = async (
+  email: string,
+  profile: { name: string; image?: string | null },
+) => {
+  const users = getUsersCollection();
+  return users.updateOne(
+    { email },
+    { $set: { name: profile.name, image: profile.image } },
+  );
+};
