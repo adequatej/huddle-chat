@@ -26,6 +26,16 @@ export type MBTAVehicle = {
   distance?: number; // Meters from user location
 };
 
+export type MBTAStopAttributes = {
+  name: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  municipality: string;
+  platform_name?: string;
+  wheelchair_boarding?: number;
+};
+
 export type MBTAAPISchedule = {
   attributes: {
     arrival_time: string | null;
@@ -59,4 +69,14 @@ export type MBTAAPISchedule = {
     };
   };
   type: string;
+};
+
+export type MBTAAPIVehicle = {
+  relationships: {
+    route: { data: { id: string } };
+    trip: { data: { id: string } };
+    stop: { data: { id: string } };
+  };
+  id: string;
+  attributes: MBTAVehicleAttributes;
 };
