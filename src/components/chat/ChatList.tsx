@@ -11,58 +11,47 @@ import {
 import { useEffect, useState } from 'react';
 
 export default function ChatList({
+  chatIDs,
   selectedChat,
   setSelectedChat,
 }: {
-  chats: Chat[];
+  chatIDs: string[];
   selectedChat: Chat | null;
   setSelectedChat: (chat: Chat) => void;
 }) {
-  const [fetchedChats, setFetchedChats] = useState<Chat[]>([]);
+  const [activeChats, setActiveChats] = useState<Chat[]>([]);
 
   useEffect(() => {
-    const chatIds = ['test'];
+    if (chatIDs.length === 0) return;
 
-    if (chatIds.length === 0) return;
+    const fetchChats = async () => {
+      try {
+        const updatedChats: Chat[] = [];
 
-    const eventSources: EventSource[] = [];
+        for (const chatID of chatIDs) {
+          const response = await fetch(`/api/chat/${chatID}`);
+          if (!response.ok) throw new Error('Failed to fetch chat');
 
-    chatIds.forEach((chatId) => {
-      const eventSource = new EventSource(`/api/chat/${chatId}`);
-      eventSource.onmessage = (event) => {
-        const newChat = JSON.parse(event.data);
-        console.log('New chat:', newChat);
-        setFetchedChats((prevChats) => {
-          const existingChatIndex = prevChats.findIndex(
-            (chat) => chat.chatId === newChat.chatId,
-          );
+          const newChat = await response.json();
+          updatedChats.push(newChat);
+        }
 
-          if (existingChatIndex !== -1) {
-            const updatedChats = [...prevChats];
-            updatedChats[existingChatIndex] = newChat;
-            return updatedChats;
-          } else {
-            return [...prevChats, newChat];
-          }
-        });
-      };
-
-      eventSource.onerror = (err) => {
-        console.error(`SSE error for chatId ${chatId}:`, err);
-        eventSource.close();
-      };
-
-      eventSources.push(eventSource);
-    });
-
-    return () => {
-      eventSources.forEach((es) => es.close());
+        setActiveChats((prevChats) =>
+          JSON.stringify(prevChats) !== JSON.stringify(updatedChats)
+            ? updatedChats
+            : prevChats,
+        );
+      } catch (error) {
+        console.error('Error fetching chat data:', error);
+      }
     };
-  }, []);
+
+    fetchChats();
+  }, [chatIDs]);
 
   return (
     <SidebarMenu>
-      {fetchedChats.map((item) => (
+      {activeChats.map((item) => (
         <div key={item.chatId}>
           <SidebarSeparator className="bg-accent -translate-x-2" />
           <SidebarMenuItem key={item.chatId} className="mt-1 h-18 min-h-16">

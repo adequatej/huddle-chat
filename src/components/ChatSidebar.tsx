@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -245,24 +245,7 @@ export function ChatSidebar({
   selectedChat: Chat | null;
   setSelectedChat: (chat: Chat) => void;
 }) {
-  const [allChats, setAllChats] = useState<Chat[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  useEffect(() => {
-    async function fetchChats() {
-      try {
-        const response = await fetch(`/api/chat/`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch chats');
-        }
-        const data = await response.json();
-        setAllChats(data);
-      } catch (error) {
-        console.error('something went wrong:', error);
-      }
-    }
-
-    fetchChats();
-  }, []);
 
   return (
     <Sidebar className="bg-sidebar-accent">
@@ -283,7 +266,7 @@ export function ChatSidebar({
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <ChatList
-              chats={allChats}
+              chatIDs={['test']}
               selectedChat={selectedChat}
               setSelectedChat={setSelectedChat}
             />
@@ -296,7 +279,7 @@ export function ChatSidebar({
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <ChatList
-              chats={allChats}
+              chatIDs={['test']}
               selectedChat={selectedChat}
               setSelectedChat={setSelectedChat}
             />

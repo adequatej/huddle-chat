@@ -25,6 +25,45 @@ export default function ChatPage() {
 
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
 
+  const queryInterval = 2000; // 2 second
+
+  useEffect(() => {
+    const chatId = selectedChat ? selectedChat.chatId : 'test';
+
+    if (!chatId) return;
+
+    const fetchChats = async () => {
+      try {
+        const response = await fetch(`/api/chat/${chatId}`);
+        if (!response.ok) throw new Error('Failed to fetch chats');
+        const newChat: Chat = await response.json();
+
+        const recentNewId =
+          newChat.messages[newChat.messages.length - 1].messageId;
+
+        const recentFetchedID = selectedChat
+          ? selectedChat.messages[selectedChat.messages.length - 1].messageId
+          : null;
+
+        // Only update fetchedChats if the most recent message ID is different
+        if (recentNewId !== recentFetchedID) {
+          setSelectedChat(newChat);
+        }
+
+        //        setSelectedChat(newChat);
+      } catch (error) {
+        console.error('Error fetching chat data:', error);
+      }
+    };
+
+    // Initial fetch
+    fetchChats();
+
+    const intervalId = setInterval(fetchChats, queryInterval);
+
+    return () => clearInterval(intervalId);
+  }, [selectedChat]);
+
   // If the session is not loaded, show a loading spinner
   if (!user) {
     return (
