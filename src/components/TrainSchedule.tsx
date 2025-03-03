@@ -20,9 +20,6 @@ import {
   Train,
   Search,
   Filter,
-  Users,
-  ArrowLeftRight,
-  User,
   RefreshCcw,
   Star,
 } from 'lucide-react';
@@ -46,8 +43,6 @@ const mockTrains = [
     status: 'On Route',
     arrivalTime: '11:20 AM',
     alerts: ['Minor delay expected'],
-    type: 'Express',
-    capacity: 3,
     stops: [
       {
         location: 'Location 1',
@@ -55,7 +50,6 @@ const mockTrains = [
         departure: '10:05',
         status: 'Departed',
         platform: '1',
-        connections: ['Bus 101', 'Train 15'],
       },
       {
         location: 'Location 2',
@@ -63,7 +57,6 @@ const mockTrains = [
         departure: '10:20',
         status: 'On Route',
         platform: '2',
-        connections: ['Bus 102'],
       },
       {
         location: 'Location 3',
@@ -71,7 +64,6 @@ const mockTrains = [
         departure: '10:35',
         status: 'Expected',
         platform: '1',
-        connections: ['Train 22'],
       },
       {
         location: 'Location 4',
@@ -79,7 +71,6 @@ const mockTrains = [
         departure: '10:50',
         status: 'Expected',
         platform: '3',
-        connections: ['Bus 105', 'Train 33'],
       },
     ],
   },
@@ -90,8 +81,6 @@ const mockTrains = [
     currentLocation: 'South Station',
     status: 'On Time',
     arrivalTime: '12:05 PM',
-    type: 'Local',
-    capacity: 1,
     alerts: [],
     stops: [
       {
@@ -100,7 +89,6 @@ const mockTrains = [
         departure: '11:05',
         status: 'Expected',
         platform: '4',
-        connections: ['Red Line', 'Silver Line'],
       },
       {
         location: 'Back Bay',
@@ -108,7 +96,6 @@ const mockTrains = [
         departure: '11:20',
         status: 'Expected',
         platform: '2',
-        connections: ['Orange Line'],
       },
       {
         location: 'Newton',
@@ -116,7 +103,6 @@ const mockTrains = [
         departure: '11:35',
         status: 'Expected',
         platform: '1',
-        connections: ['Bus 553'],
       },
     ],
   },
@@ -128,7 +114,6 @@ export function TrainSchedule() {
     (typeof mockTrains)[0] | null
   >(null);
   const [filterStatus, setFilterStatus] = useState('all');
-  const [filterType, setFilterType] = useState('all');
   const [showFavorites, setShowFavorites] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -159,10 +144,9 @@ export function TrainSchedule() {
 
     const matchesStatus =
       filterStatus === 'all' || train.status === filterStatus;
-    const matchesType = filterType === 'all' || train.type === filterType;
     const matchesFavorites = !showFavorites || favorites.includes(train.id);
 
-    return matchesSearch && matchesStatus && matchesType && matchesFavorites;
+    return matchesSearch && matchesStatus && matchesFavorites;
   });
 
   const getStatusColor = (status: string) => {
@@ -178,31 +162,6 @@ export function TrainSchedule() {
       default:
         return 'default';
     }
-  };
-
-  const getCapacityDisplay = (capacity: number) => {
-    const level = {
-      1: { text: 'Low', color: 'text-green-500' },
-      2: { text: 'Medium', color: 'text-yellow-500' },
-      3: { text: 'High', color: 'text-red-500' },
-    }[capacity] || { text: 'Unknown', color: 'text-muted-foreground' };
-
-    return (
-      <div className="flex items-center gap-1.5">
-        <div className="flex">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <User
-              key={i}
-              className={cn(
-                '-ml-1 h-4 w-4 first:ml-0',
-                i < capacity ? level.color : 'text-muted-foreground/20',
-              )}
-            />
-          ))}
-        </div>
-        <span className={cn('text-xs', level.color)}>{level.text}</span>
-      </div>
-    );
   };
 
   // To render train info as a card for mobile
@@ -238,9 +197,6 @@ export function TrainSchedule() {
               />
             </Button>
             <h3 className="font-medium">{train.trainNumber}</h3>
-            <Badge variant="outline" className="text-xs">
-              {train.type}
-            </Badge>
           </div>
           <div className="text-muted-foreground space-y-1 text-sm">
             <div className="flex items-center gap-2">
@@ -267,8 +223,7 @@ export function TrainSchedule() {
           </span>
         </div>
       </div>
-      <div className="mt-4 flex items-center justify-between">
-        <div>{getCapacityDisplay(train.capacity)}</div>
+      <div className="mt-4 flex items-center justify-end">
         <Badge variant={getStatusColor(train.status)}>{train.status}</Badge>
       </div>
       {train.alerts.length > 0 && (
@@ -303,24 +258,19 @@ export function TrainSchedule() {
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              {selectedTrain.trainNumber}
-            </h2>
-            <p className="text-muted-foreground">
-              To: {selectedTrain.destination}
-            </p>
-          </div>
-          <Badge variant="outline" className="text-sm">
-            {selectedTrain.type}
-          </Badge>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            {selectedTrain.trainNumber}
+          </h2>
+          <p className="text-muted-foreground">
+            To: {selectedTrain.destination}
+          </p>
         </div>
 
         {/* Status Overview */}
         <Card>
           <div className="p-4 sm:p-6">
-            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-3">
               <div className="flex items-center gap-3">
                 <MapPin className="text-primary h-4 w-4" />
                 <div>
@@ -337,13 +287,6 @@ export function TrainSchedule() {
                   <p className="text-muted-foreground text-sm">
                     {selectedTrain.arrivalTime}
                   </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Users className="text-primary h-4 w-4" />
-                <div>
-                  <p className="text-sm font-medium">Capacity</p>
-                  {getCapacityDisplay(selectedTrain.capacity)}
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -430,23 +373,6 @@ export function TrainSchedule() {
                     {stop.status}
                   </Badge>
                 </div>
-
-                {/* Connections */}
-                {stop.connections.length > 0 && (
-                  <div className="text-muted-foreground mt-3 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
-                    <div className="flex shrink-0 items-center gap-1">
-                      <ArrowLeftRight className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span>Connections:</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1 sm:gap-2">
-                      {stop.connections.map((connection, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs">
-                          {connection}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </Card>
           ))}
@@ -507,17 +433,6 @@ export function TrainSchedule() {
             </SelectContent>
           </Select>
 
-          <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Filter by type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="Express">Express</SelectItem>
-              <SelectItem value="Local">Local</SelectItem>
-            </SelectContent>
-          </Select>
-
           <Button
             variant={showFavorites ? 'secondary' : 'outline'}
             onClick={() => setShowFavorites(!showFavorites)}
@@ -544,12 +459,10 @@ export function TrainSchedule() {
               <TableRow>
                 <TableHead className="w-[30px]"></TableHead>
                 <TableHead>Train</TableHead>
-                <TableHead>Type</TableHead>
                 <TableHead>Current Location</TableHead>
                 <TableHead>Destination</TableHead>
                 <TableHead>Arrival</TableHead>
                 <TableHead>Time Until</TableHead>
-                <TableHead>Capacity</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -587,7 +500,6 @@ export function TrainSchedule() {
                   <TableCell className="font-medium">
                     {train.trainNumber}
                   </TableCell>
-                  <TableCell>{train.type}</TableCell>
                   <TableCell>{train.currentLocation}</TableCell>
                   <TableCell>{train.destination}</TableCell>
                   <TableCell>{train.arrivalTime}</TableCell>
@@ -603,7 +515,6 @@ export function TrainSchedule() {
                       {getCountdown(train.arrivalTime.split(' ')[0])}
                     </span>
                   </TableCell>
-                  <TableCell>{getCapacityDisplay(train.capacity)}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusColor(train.status)}>
                       {train.status}
