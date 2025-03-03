@@ -2,6 +2,7 @@ import { auth } from '@/app/auth';
 import requestMbta from '@/lib/mbta/request';
 import { getStopsSortedByDistance } from '@/lib/mbta/objectsByDistance';
 import { NextRequest, NextResponse } from 'next/server';
+import { User } from '@/lib/types/user';
 
 export async function GET(req: NextRequest) {
   // Get long, lat, and acc query parameters
@@ -22,6 +23,7 @@ export async function GET(req: NextRequest) {
   if (!session?.user || !session.user.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const user = session.user as User;
 
   // Get current commuter trains
   // Filters:
@@ -30,7 +32,7 @@ export async function GET(req: NextRequest) {
   // - latitude and longitude are set
   const nearestStops = await requestMbta(
     `/stops?page[limit]=5&filter[latitude]=${lat}&filter[longitude]=${lon}&filter[route_type]=2`,
-    session.user,
+    user,
   );
 
   // Sort commuter trains by distance

@@ -25,3 +25,58 @@ export type MBTAVehicle = {
   id: string;
   distance?: number; // Meters from user location
 };
+
+export type MBTAStopAttributes = {
+  name: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  municipality: string;
+  platform_name?: string;
+  wheelchair_boarding?: number;
+};
+
+export type MBTAAPISchedule = {
+  attributes: {
+    arrival_time: string | null;
+    departure_time: string | null;
+    direction_id: number;
+    drop_off_type: number;
+    pickup_type: number;
+    stop_headsign: string | null;
+    stop_sequence: number;
+    timepoint: boolean;
+  };
+  id: string;
+  relationships: {
+    route: {
+      data: {
+        id: string;
+        type: string;
+      };
+    };
+    stop: {
+      data: {
+        id: string;
+        type: string;
+      };
+    };
+    trip: {
+      data: {
+        id: string;
+        type: string;
+      };
+    };
+  };
+  type: string;
+};
+
+export type MBTAAPIVehicle = {
+  relationships: {
+    route: { data: { id: string } };
+    trip: { data: { id: string } };
+    stop: { data: { id: string } };
+  };
+  id: string;
+  attributes: MBTAVehicleAttributes;
+};
