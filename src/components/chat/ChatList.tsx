@@ -19,9 +19,10 @@ export default function ChatList({
   setSelectedChat: (chat: Chat) => void;
 }) {
   const [fetchedChats, setFetchedChats] = useState<Chat[]>([]);
-  const chatIds = ['test'];
 
   useEffect(() => {
+    const chatIds = ['test'];
+
     if (chatIds.length === 0) return;
 
     const eventSources: EventSource[] = [];
@@ -57,7 +58,7 @@ export default function ChatList({
     return () => {
       eventSources.forEach((es) => es.close());
     };
-  }, [chatIds]);
+  }, []);
 
   return (
     <SidebarMenu>
