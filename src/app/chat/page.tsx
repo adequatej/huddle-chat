@@ -35,7 +35,6 @@ export default function ChatPage() {
     const fetchChats = async () => {
       try {
         const response = await fetch(`/api/chat/${chatId}`);
-        if (!response.ok) throw new Error('Failed to fetch chats');
         const newChat: Chat = await response.json();
 
         const recentNewId =
@@ -52,7 +51,7 @@ export default function ChatPage() {
 
         //        setSelectedChat(newChat);
       } catch (error) {
-        console.error('Error fetching chat data:', error);
+        console.log('Error fetching chat data:', error);
       }
     };
 

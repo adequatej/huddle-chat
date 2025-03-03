@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -12,6 +12,9 @@ import { Input } from './ui/input';
 import { History, MapPin } from 'lucide-react';
 import { Chat } from '@/lib/types/chat';
 import ChatList from './chat/ChatList';
+import { MBTAVehicle } from '@/lib/types/mbta';
+import { getLocation, useLocation } from '@/lib/getLocation';
+import LocationCard from './LocationCard';
 /*
 const chatsDummy: Chat[] = [
   {
@@ -246,6 +249,50 @@ export function ChatSidebar({
   setSelectedChat: (chat: Chat) => void;
 }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [nearbyChatIDs, setNearbyChatIDs] = useState<string[]>([]);
+
+  const { location /* error, loading,*/ } = useLocation();
+
+  const distanceThreshold = 40000; // 4 km
+
+  useEffect(() => {
+    const getChatRooms = async () => {
+      try {
+        const location = await getLocation();
+        const stopsResponse = await fetch(
+          `/api/mbta/nearest-stops?lat=${location.lat}&lon=${location.lon}&acc=${location.acc}`,
+        );
+        const vehicleResponse = await fetch(
+          `/api/mbta/nearest-vehicles?lat=${location.lat}&lon=${location.lon}&acc=${location.acc}`,
+        );
+        const chats: string[] = [];
+        const vehicles = await vehicleResponse.json();
+        const stops = await stopsResponse.json();
+        vehicles.forEach((vehicle: MBTAVehicle) => {
+          console.log(vehicle.distance);
+          if (
+            vehicle.distance &&
+            vehicle.distance < distanceThreshold + location.acc * 1.5
+          )
+            chats.push(vehicle.id);
+        });
+        stops.forEach((stop: MBTAVehicle) => {
+          console.log(stop.distance);
+          if (
+            stop.distance &&
+            stop.distance < distanceThreshold + location.acc * 1.5
+          )
+            chats.push(stop.id);
+        });
+        setNearbyChatIDs(chats);
+        console.log(chats);
+      } catch {
+        console.log('Error fetching location');
+      }
+    };
+
+    getChatRooms();
+  }, []);
 
   return (
     <Sidebar className="bg-sidebar-accent">
@@ -265,8 +312,10 @@ export function ChatSidebar({
             Current Locations
           </SidebarGroupLabel>
           <SidebarGroupContent>
+            {location && <LocationCard />}
+
             <ChatList
-              chatIDs={['test']}
+              chatIDs={nearbyChatIDs}
               selectedChat={selectedChat}
               setSelectedChat={setSelectedChat}
             />
@@ -279,7 +328,6 @@ export function ChatSidebar({
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <ChatList
-              chatIDs={['test']}
               selectedChat={selectedChat}
               setSelectedChat={setSelectedChat}
             />

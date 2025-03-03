@@ -1,4 +1,4 @@
-import { Chat } from '@/lib/types/chat';
+import { APIMessage, Chat } from '@/lib/types/chat';
 import { cn } from '@/lib/utils';
 import { TrainFront, Octagon } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
@@ -15,34 +15,61 @@ export default function ChatList({
   selectedChat,
   setSelectedChat,
 }: {
-  chatIDs: string[];
+  chatIDs?: string[];
   selectedChat: Chat | null;
   setSelectedChat: (chat: Chat) => void;
 }) {
   const [activeChats, setActiveChats] = useState<Chat[]>([]);
 
   useEffect(() => {
-    if (chatIDs.length === 0) return;
+    if (chatIDs?.length === 0) return;
 
     const fetchChats = async () => {
       try {
-        const updatedChats: Chat[] = [];
-
-        for (const chatID of chatIDs) {
-          const response = await fetch(`/api/chat/${chatID}`);
+        if (!chatIDs) {
+          const response = await fetch(`/api/chat/`);
           if (!response.ok) throw new Error('Failed to fetch chat');
+          const userChats = await response.json();
+          setActiveChats(userChats);
+        } else {
+          const updatedChats: Chat[] = [];
 
-          const newChat = await response.json();
-          updatedChats.push(newChat);
+          for (const chatID of chatIDs) {
+            const response = await fetch(`/api/chat/${chatID}`);
+            if (!response.ok) {
+              const newRoomMessage: APIMessage = {
+                messageId: '0',
+                message: 'Be the first to say hi!',
+                timestamp: Date.now(),
+                user: {
+                  id: '0',
+                  name: 'System',
+                  image: 'https://randomuser.me/api/portraits',
+                },
+                reactions: {},
+              };
+
+              const newRoom: Chat = {
+                chatId: chatID,
+                chatType: 'stop',
+                messages: [newRoomMessage],
+              };
+              updatedChats.push(newRoom);
+              setActiveChats(updatedChats);
+            } else {
+              const newChat = await response.json();
+              updatedChats.push(newChat);
+
+              setActiveChats((prevChats) =>
+                JSON.stringify(prevChats) !== JSON.stringify(updatedChats)
+                  ? updatedChats
+                  : prevChats,
+              );
+            }
+          }
         }
-
-        setActiveChats((prevChats) =>
-          JSON.stringify(prevChats) !== JSON.stringify(updatedChats)
-            ? updatedChats
-            : prevChats,
-        );
       } catch (error) {
-        console.error('Error fetching chat data:', error);
+        console.log('Error fetching chat data:', error);
       }
     };
 
