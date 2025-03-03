@@ -14,11 +14,17 @@ export async function GET() {
   const userId = session.user.id; // Get the user ID
   const chatsCollection = client.db('huddle-chat').collection('chats'); // Get the chats collection
 
-  // Get all chat messages for the user and join with the user collection
+  const userChatIdsAgg = await chatsCollection
+    .aggregate([{ $match: { userId } }, { $group: { _id: '$chatId' } }])
+    .toArray();
+
+  const userChatIds = userChatIdsAgg.map((doc) => doc._id);
+
+  // Second query: Get all messages for those chats, with user details populated
   const chatMessages = (await chatsCollection
     .aggregate([
       {
-        $match: { userId },
+        $match: { chatId: { $in: userChatIds } },
       },
       {
         $addFields: {

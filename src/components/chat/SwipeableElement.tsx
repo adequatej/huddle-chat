@@ -45,7 +45,7 @@ export default function SwipeableElement({
         setCurrentX(diff);
       }
     },
-    [startX, direction],
+    [startX, direction, threshold],
   );
 
   const handleTouchEnd = useCallback(() => {
