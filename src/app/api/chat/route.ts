@@ -6,6 +6,7 @@ import {
   MongoDBChatMessage,
 } from '@/lib/types/chat';
 import { NextRequest, NextResponse } from 'next/server';
+import { ObjectId } from 'mongodb';
 
 export async function GET() {
   // Check for authenticated user
@@ -133,4 +134,48 @@ export async function POST(req: NextRequest) {
   } as MongoDBChatMessage);
 
   return NextResponse.json({ success: true });
+}
+
+// Report a message
+export async function PATCH(req: NextRequest) {
+  let body: { messageId: string };
+
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      { error: 'Invalid request body' },
+      { status: 400 },
+    );
+  }
+
+  if (!body.messageId) {
+    return NextResponse.json(
+      { error: 'Message ID is required' },
+      { status: 400 },
+    );
+  }
+
+  const session = await auth();
+  if (!session?.user || !session.user.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const chatsCollection = client.db('huddle-chat').collection('chats');
+
+  // Convert messageId to ObjectId
+  const message = await chatsCollection.findOne({
+    _id: new ObjectId(body.messageId),
+  });
+  if (!message) {
+    return NextResponse.json({ error: 'Message not found' }, { status: 404 });
+  }
+
+  // Update the message to mark it as reported
+  await chatsCollection.updateOne(
+    { _id: new ObjectId(body.messageId) },
+    { $set: { reported: true } },
+  );
+
+  return NextResponse.json({ success: true, message: 'Message reported' });
 }
