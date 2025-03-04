@@ -17,7 +17,7 @@ function AvatarDropdown({ session }: { session: Session }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar className="size-10">
+        <Avatar className="size-9">
           <AvatarImage src={session?.user?.image || ''} />
           <AvatarFallback>
             {session?.user?.name?.charAt(0).toUpperCase() || '?'}
@@ -28,7 +28,7 @@ function AvatarDropdown({ session }: { session: Session }) {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/preferences">Preferences</Link>
+          <Link href="/settings">Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuItem variant={'destructive'} onSelect={() => signOut()}>
           Sign Out
