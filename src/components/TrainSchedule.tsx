@@ -10,7 +10,6 @@ import {
   MapPin,
   Train as TrainIcon,
   Search,
-  RefreshCcw,
   Star,
   Flag,
   Accessibility,
@@ -19,6 +18,8 @@ import {
   ArrowRight,
   Timer,
   AlarmClock,
+  Loader2,
+  RefreshCcw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -957,7 +958,7 @@ export function TrainSchedule() {
 
           {isLoadingRoutes ? (
             <div className="flex justify-center py-8">
-              <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
+              <Loader2 className="h-8 w-8 animate-spin" />
             </div>
           ) : routes.length === 0 ? (
             <div className="text-muted-foreground py-8 text-center">
@@ -1011,7 +1012,7 @@ export function TrainSchedule() {
 
           {isLoadingTrains ? (
             <div className="flex justify-center py-8">
-              <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
+              <Loader2 className="h-8 w-8 animate-spin" />
             </div>
           ) : filteredTrains.length > 0 ? (
             <div className="grid grid-cols-1 gap-2">
@@ -1044,7 +1045,7 @@ export function TrainSchedule() {
           </div>
 
           {/* Train Summary Banner - Key Information */}
-          <Card className="bg-secondary mb-4">
+          <Card className="bg-secondary text-secondary-foreground mb-4">
             <CardContent className="p-3 sm:p-4">
               {/* Header section with train number, status, and actions */}
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
@@ -1260,7 +1261,7 @@ export function TrainSchedule() {
 
           {isLoadingDetails ? (
             <div className="flex justify-center py-8">
-              <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
+              <Loader2 className="h-8 w-8 animate-spin" />
             </div>
           ) : selectedTrain.stops.length === 0 ? (
             <div className="text-muted-foreground py-8 text-center">
