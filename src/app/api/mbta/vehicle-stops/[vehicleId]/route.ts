@@ -6,7 +6,7 @@ import {
 } from '@/lib/types/mbta';
 import { NextRequest, NextResponse } from 'next/server';
 
-// Cache for stop info to avoid redundant API calls
+// Made a local cache for stop info to avoid redundant API calls
 const localStopCache: Map<string, MBTAStopAttributes> = new Map();
 
 // Fetch stop info (with caching)
@@ -42,7 +42,7 @@ async function fetchSchedules(
   let currentStopScheduleIndex = -1;
   let smallestDiff = Infinity;
 
-  // Single pass: filter for matching stopId and track the closest departure time
+  // Single pass: Made it a single pass and filtered for matching stopId and track the closest departure time
   for (let i = 0; i < response.length; i++) {
     const schedule = response[i];
     if (schedule.relationships?.stop?.data?.id === stopId) {
@@ -142,6 +142,7 @@ export async function GET(
 
   return NextResponse.json({
     vehicle: vehicle.attributes,
+    currentStatus: vehicle.attributes.current_status,
     currentStop: completeSchedule.find(
       (schedule) =>
         schedule.stopSequence === vehicle.attributes.current_stop_sequence,

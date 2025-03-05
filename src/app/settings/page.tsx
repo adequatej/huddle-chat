@@ -23,40 +23,43 @@ export default async function SettingsPage() {
   };
 
   return (
-    <div className="container mx-auto p-8">
-      <div className="mb-8 flex items-center gap-4">
+    <div className="container mx-auto p-4 pt-28 sm:p-8">
+      <div className="mb-6 flex items-center gap-2 sm:mb-8 sm:gap-4">
         <Link href="/">
           <Button variant="ghost" size="icon" className="rounded-full">
             <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">Settings</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl">Settings</h1>
       </div>
 
       <div className="mx-auto max-w-2xl">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="mb-8 grid w-full grid-cols-2">
-            <TabsTrigger value="profile" className="flex items-center gap-2">
+          <TabsList className="mb-6 grid w-full grid-cols-2 sm:mb-8">
+            <TabsTrigger
+              value="profile"
+              className="flex items-center gap-2 text-sm sm:text-base"
+            >
               <User className="size-4" />
-              Profile
+              <span>Profile</span>
             </TabsTrigger>
             <TabsTrigger
               value="preferences"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 text-sm sm:text-base"
             >
               <Settings className="size-4" />
-              Preferences
+              <span>Preferences</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="profile" className="space-y-6">
-            <div className="rounded-lg border p-6">
+          <TabsContent value="profile" className="space-y-4 sm:space-y-6">
+            <div className="rounded-lg border p-3 sm:p-6">
               <ProfileForm user={user} />
             </div>
           </TabsContent>
 
-          <TabsContent value="preferences" className="space-y-6">
-            <div className="rounded-lg border p-6">
+          <TabsContent value="preferences" className="space-y-4 sm:space-y-6">
+            <div className="rounded-lg border p-3 sm:p-6">
               <PreferencesForm
                 initialPreferences={
                   user.preferences ?? { notifications: false }
