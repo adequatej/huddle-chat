@@ -74,8 +74,10 @@ export function ChatSidebar({
       }
     };
 
-    getChatRooms();
-  }, []);
+    if (location) {
+      getChatRooms();
+    }
+  }, [location]);
 
   return (
     <Sidebar className="bg-sidebar-accent">

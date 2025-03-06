@@ -55,18 +55,12 @@ export default function ChatList({
                 messages: [...chat.messages, newRoomMessage],
               };
               updatedChats.push(newRoom);
-              setActiveChats(updatedChats);
             } else {
               const newChat = await response.json();
               updatedChats.push(newChat);
-
-              setActiveChats((prevChats) =>
-                JSON.stringify(prevChats) !== JSON.stringify(updatedChats)
-                  ? updatedChats
-                  : prevChats,
-              );
             }
           }
+          setActiveChats(updatedChats);
         }
       } catch (error) {
         console.log('Error fetching chat data:', error);
