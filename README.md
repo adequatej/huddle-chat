@@ -96,6 +96,42 @@ AUTH_GOOGLE_SECRET="" # your google secret
 - When retriving chat history, all messages are retrieved and joins w/ user data
 - Then messages are formatted and grouped by chat room (chatId)
 
+## Train Schedule
+
+The Train Schedule feature provides real-time information about MBTA commuter rail routes, their trains, and stops.
+
+### Routes
+
+- Displays all available MBTA commuter rail routes
+- Routes are sorted by their official MBTA sort order
+- Users can select a route to view all active trains on that route
+
+### Trains
+
+- Shows real-time information for all trains on a selected route
+- Displays train number, current status (At Station, En Route, Not Departed), and location or last stop and the next stop
+- Provides speed when available
+- Implements auto-refresh to keep train data current (30-second intervals)
+- Trains can be favorited for quick access
+- Color-coded status indicators show train's current state
+- Countdown timers for arrivals and departures
+- Provides last updated timestamp
+- Search functionality to find a specific train by number
+
+### Stops
+
+- At top of the page, displays a summary with the train number, the status, the final destination/route, the current stop and next stop for the selected train, and the arrival/departure time
+- Shows platform information when available (track number)
+- Contextual display based on train's journey phase:
+  - For trains that haven't started their journey: Shows first 3 stops
+  - For trains at a station: Shows last departed stop, current stop, and upcoming stops
+  - For trains en route: Shows last departed stop, and upcoming stops
+- Color-coded indicators for departed, current, and expected stops
+- Displays the expected arrival time, and the time until arrival
+- Municipality information for each stop (wheelchair accessibility)
+
+The Train Schedule component handles different train states and provides appropriate information for each scenario. It uses the MBTA API to fetch real-time data and transforms it into user-friendly formats. The interface is designed to be intuitive and responsive, providing users with the information they need at a glance.
+
 ## API Docs
 
 ### MBTA
@@ -166,3 +202,246 @@ AUTH_GOOGLE_SECRET="" # your google secret
 >   ...
 > ]
 > ```
+
+> #### Get Array of Current Vehicles
+>
+> `GET` `/api/mbta/current-vehicles`
+>
+> **Response**
+>
+> ```json
+> [
+>   {
+>     "id": "1707",
+>     "bearing": null,
+>     "current_status": "STOPPED_AT",
+>     "current_stop_sequence": 40,
+>     "direction_id": 0,
+>     "label": "1707",
+>     "latitude": 42.52439880371094,
+>     "longitude": -70.89594268798828,
+>     "speed": 13.2,
+>     "updated_at": "2025-03-03T12:39:51-05:00"
+>   },
+>   ...
+> ]
+> ```
+
+> #### Get Stops by Vehicle ID
+>
+> `GET` `/api/mbta/vehicle-stops/<vehicleId>`
+>
+> **Parameters**
+> | Name | Required | Data Type | Description |
+> | --- | --- | --- | --- |
+> | vehicleId | true | number | ID of the vehicle (obtainable from `/api/mbta/current-vehicles`) |
+>
+> **Response**
+>
+> ```json
+> {
+>   "vehicle": {
+>     "bearing": 213,
+>     "current_status": "IN_TRANSIT_TO",
+>     "current_stop_sequence": 30,
+>     "direction_id": 0,
+>     "label": "1833",
+>     "latitude": 42.31934356689453,
+>     "longitude": -71.1028060913086,
+>     "speed": 31.7,
+>     "updated_at": "2025-03-03T14:17:28-05:00"
+>   },
+>   "currentStop": {
+>     "id": "schedule-SouthWKDYF24-697857-877-NEC-2203-03-30",
+>     "arrivalTime": "2025-03-03T14:21:00-05:00",
+>     "departureTime": "2025-03-03T14:21:00-05:00",
+>     "stopSequence": 30,
+>     "name": "Hyde Park",
+>     "description": "Hyde Park - Commuter Rail - Track 3 (Outbound)",
+>     "municipality": "Boston",
+>     "platformName": "Track 3 (Outbound)",
+>     "latitude": 42.25503,
+>     "longitude": -71.125526,
+>     "wheelchairBoarding": 1
+>   },
+>   "stops": [
+>     {
+>       "id": "schedule-SouthWKDYF24-697857-877-NEC-2276-03-10",
+>       "arrivalTime": "2025-03-03T14:10:00-05:00",
+>       "departureTime": "2025-03-03T14:10:00-05:00",
+>       "stopSequence": 10,
+>       "name": "Back Bay",
+>       "description": "Back Bay - Commuter Rail - Track 3",
+>       "municipality": "Boston",
+>       "platformName": "Commuter Rail - Track 3",
+>       "latitude": 42.347283,
+>       "longitude": -71.075312,
+>       "wheelchairBoarding": 1
+>     },
+>     ...
+>   ]
+> }
+> ```
+
+> #### Get All Train Routes
+>
+> `GET` `/api/mbta/routes`
+>
+> **Response**
+>
+> ```json
+> [
+>   {
+>     "id": "CR-Worcester",
+>     "name": "Worcester",
+>     "shortName": "Worcester",
+>     "description": "Worcester Line",
+>     "color": "80276C",
+>     "textColor": "FFFFFF",
+>     "sortOrder": 10
+>   },
+>   {
+>     "id": "CR-Franklin",
+>     "name": "Franklin",
+>     "shortName": "Franklin",
+>     "description": "Franklin Line",
+>     "color": "80276C",
+>     "textColor": "FFFFFF",
+>     "sortOrder": 11
+>   },
+>   ...
+> ]
+> ```
+
+> #### Get Vehicles for a Specific Route
+>
+> `GET` `/api/mbta/route-vehicles/<routeId>`
+>
+> **Parameters**
+> | Name | Required | Data Type | Description |
+> | --- | --- | --- | --- |
+> | routeId | true | string | ID of the route (e.g., "CR-Worcester") |
+>
+> **Response**
+>
+> ```json
+> [
+>   {
+>     "id": "1707",
+>     "label": "1707",
+>     "current_status": "STOPPED_AT",
+>     "updated_at": "2025-03-03T12:39:51-05:00",
+>     "bearing": 213,
+>     "speed": 13.2,
+>     "latitude": 42.52439880371094,
+>     "longitude": -70.89594268798828
+>   },
+>   ...
+> ]
+> ```
+
+### User
+
+> #### Get User Favorites
+>
+> `GET` `/api/user/favorites`
+>
+> **Response**
+>
+> ```json
+> {
+>   "favorites": ["1707", "1833", "1859"]
+> }
+> ```
+
+> #### Toggle Favorite Status
+>
+> `POST` `/api/user/favorites`
+>
+> **Request Body**
+>
+> ```json
+> {
+>   "trainId": "1707",
+>   "action": "add" // or "remove"
+> }
+> ```
+>
+> **Response**
+>
+> ```json
+> {
+>   "favorites": ["1707", "1833", "1859"]
+> }
+> ```
+
+> #### Complete User Onboarding
+>
+> `POST` `/api/user/onboarding`
+>
+> **Request Body**
+>
+> ```json
+> {
+>   "preferences": {
+>     "notifications": true
+>   }
+> }
+> ```
+>
+> **Response**
+>
+> ```json
+> {
+>   "success": true,
+>   "message": "Onboarding completed successfully"
+> }
+> ```
+
+> #### Update User Profile
+>
+> `POST` `/api/user/profile`
+>
+> **Request Body**
+>
+> ```json
+> {
+>   "profile": {
+>     "name": "John Doe",
+>     "image": "https://example.com/profile.jpg"
+>   }
+> }
+> ```
+>
+> **Response**
+>
+> ```json
+> {
+>   "message": "Profile updated successfully"
+> }
+> ```
+
+> #### Update User Preferences
+>
+> `POST` `/api/user/preferences`
+>
+> **Request Body**
+>
+> ```json
+> {
+>   "preferences": {
+>     "notifications": true,
+>     "favoriteTrains": ["1707", "1833"]
+>   }
+> }
+> ```
+>
+> **Response**
+>
+> ```json
+> {
+>   "success": true
+> }
+> ```
+
+### Chat
