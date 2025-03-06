@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { ChatSidebar } from '@/components/ChatSidebar';
+import { ChatSidebar } from '@/components/chat/ChatSidebar';
 import { Loader2 } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { useSession } from 'next-auth/react';

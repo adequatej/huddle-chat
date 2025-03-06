@@ -9,13 +9,7 @@ import {
   SheetTrigger,
 } from './ui/sheet';
 import { Button } from './ui/button';
-import {
-  AlertTriangle,
-  FileClock,
-  MapPin,
-  Menu,
-  MessagesSquare,
-} from 'lucide-react';
+import { AlertTriangle, FileClock, Menu, MessagesSquare } from 'lucide-react';
 import Link from 'next/link';
 
 export function Header() {
@@ -78,10 +72,6 @@ export function Header() {
                         </Link>
                       </li>
                     </ul>
-                    <span className="absolute bottom-0 mb-5 flex">
-                      <MapPin />
-                      <span className="ml-2">[Current Vehicle or Stop]</span>
-                    </span>
                   </div>
                 </SheetDescription>
               </SheetHeader>

@@ -9,10 +9,10 @@ import {
 } from '@/components/ui/sidebar';
 import { History, MapPin } from 'lucide-react';
 import { Chat } from '@/lib/types/chat';
-import ChatList from './chat/ChatList';
+import ChatList from './ChatList';
 import { MBTAVehicle } from '@/lib/types/mbta';
 import { getLocation, useLocation } from '@/lib/getLocation';
-import LocationCard from './LocationCard';
+import LocationCard from '../LocationCard';
 
 export function ChatSidebar({
   selectedChat,
@@ -65,6 +65,8 @@ export function ChatSidebar({
               });
           },
         );
+
+        console.log('TESTING', chats);
 
         setNearbyChats(chats);
       } catch {
