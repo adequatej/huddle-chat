@@ -7,6 +7,18 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { ArrowLeft, User, Settings } from 'lucide-react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Huddle Chat - Settings',
+  description: 'Update your Huddle Chat profile and preferences.',
+  openGraph: {
+    type: 'website',
+    url: process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    title: 'Huddle Chat - Settings',
+    description: 'Update your Huddle Chat profile and preferences.',
+  },
+};
 
 // Simple page to display settings
 export default async function SettingsPage() {
