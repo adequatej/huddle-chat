@@ -1,10 +1,7 @@
 import { auth } from '@/app/auth';
+import parseDbMessages from '@/lib/chat/parseDbMessages';
 import client from '@/lib/db';
-import {
-  ChatMessage,
-  ChatPostBody,
-  MongoDBChatMessage,
-} from '@/lib/types/chat';
+import { ChatPostBody, MongoDBChatMessage } from '@/lib/types/chat';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET() {
@@ -17,11 +14,17 @@ export async function GET() {
   const userId = session.user.id; // Get the user ID
   const chatsCollection = client.db('huddle-chat').collection('chats'); // Get the chats collection
 
-  // Get all chat messages for the user and join with the user collection
-  const chatMessages = await chatsCollection
+  const userChatIdsAgg = await chatsCollection
+    .aggregate([{ $match: { userId } }, { $group: { _id: '$chatId' } }])
+    .toArray();
+
+  const userChatIds = userChatIdsAgg.map((doc) => doc._id);
+
+  // Second query: Get all messages for those chats, with user details populated
+  const chatMessages = (await chatsCollection
     .aggregate([
       {
-        $match: { userId },
+        $match: { chatId: { $in: userChatIds } },
       },
       {
         $addFields: {
@@ -40,37 +43,9 @@ export async function GET() {
         $unwind: { path: '$user', preserveNullAndEmptyArrays: true },
       },
     ])
-    .toArray();
+    .toArray()) as MongoDBChatMessage[];
 
-  // Format the chat messages to match the ChatMessage type
-  const formattedMessages = chatMessages
-    .map((message) => ({
-      chatId: message.chatId,
-      chatType: message.chatType,
-      messageId: message._id.toString(),
-      message: message.message || undefined,
-      reaction: message.reaction || undefined,
-      replyId: message.replyId || undefined,
-      timestamp: message.timestamp,
-      user: {
-        id: message.user?._id.toString(),
-        name: message.user?.name,
-        image: message.user?.image,
-      },
-      reported: message.reported,
-    }))
-    .sort((a, b) => a.timestamp - b.timestamp) as ChatMessage[];
-
-  // Split chat messages into their chat rooms (removing reported messages)
-  const chatRooms = formattedMessages.reduce(
-    (acc, message) => {
-      if (message.reported) return acc;
-      if (!acc[message.chatId]) acc[message.chatId] = [];
-      acc[message.chatId].push(message);
-      return acc;
-    },
-    {} as Record<string, ChatMessage[]>,
-  );
+  const chatRooms = parseDbMessages(chatMessages); // Parse the chat messages
 
   return NextResponse.json(chatRooms);
 }
@@ -80,7 +55,7 @@ export async function POST(req: NextRequest) {
   let body: ChatPostBody;
   try {
     body = await req.json();
-  } catch {
+  } catch (_e) {
     return NextResponse.json(
       { error: 'Invalid request body' },
       { status: 400 },

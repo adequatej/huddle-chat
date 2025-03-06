@@ -1,4 +1,4 @@
-import { User } from 'next-auth';
+import { User } from '../types/user';
 import { cacheData, checkCache } from './cache';
 
 const MBTA_API_BASE_URL = process.env.MBTA_API_BASE_URL as string;
