@@ -1,4 +1,4 @@
-import { User } from 'next-auth';
+import { User } from '../types/user';
 import { cacheData, checkCache } from './cache';
 
 const MBTA_API_BASE_URL = process.env.MBTA_API_BASE_URL as string;
@@ -6,6 +6,11 @@ const MBTA_API_KEY = process.env.MBTA_API_KEY as string;
 const DISABLE_CACHE = process.env.DISABLE_CACHE === 'true';
 
 export default async function requestMbta(path: string, user?: User) {
+  // Check that MBTA_API_BASE_URL is properly set
+  if (!MBTA_API_BASE_URL) {
+    throw new Error('MBTA_API_BASE_URL is missing from environment variables.');
+  }
+
   // Check if caching is disabled
   if (!DISABLE_CACHE) {
     // Check if the request is cached

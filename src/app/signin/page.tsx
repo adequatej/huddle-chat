@@ -11,6 +11,18 @@ import {
 } from '@/components/ui/card';
 import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Huddle Chat - Sign In',
+  description: 'Sign in to use Huddle Chat.',
+  openGraph: {
+    type: 'website',
+    url: process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    title: 'Huddle Chat - Sign In',
+    description: 'Sign in to use Huddle Chat.',
+  },
+};
 
 interface SignInPageProps {
   searchParams: Promise<{ callbackUrl?: string }>;
