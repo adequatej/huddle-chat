@@ -50,6 +50,10 @@ export async function GET(
 
     const chatRooms = parseDbMessages(chatMessages); // Parse the chat messages
 
+    if (chatRooms.length === 0) {
+      return NextResponse.json({ error: 'Chat not found' }, { status: 404 });
+    }
+
     return NextResponse.json(chatRooms[0]); // Return the only chat room
   }
 

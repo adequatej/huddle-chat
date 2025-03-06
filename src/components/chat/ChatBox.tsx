@@ -33,7 +33,7 @@ export default function ChatBox({
         <Card className="relative mb-3 rounded-lg">
           <Reply className="absolute top-2 right-3 size-6" />
           <CardHeader className="p-3">
-            <CardTitle className="flex items-center gap-1">
+            <CardTitle className="flex items-center gap-1 text-sm">
               <Button
                 size="icon"
                 variant="ghost"

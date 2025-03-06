@@ -17,24 +17,60 @@ import {
   ContextMenuTrigger,
 } from '../ui/context-menu';
 import SwipeableElement from './SwipeableElement';
+import { toast } from 'sonner';
 
 // Individual chat bubbles
 export default function ChatMessage({
+  chatDetails,
   user,
   message,
   replyToMessage,
   replyMessage,
+  updateMessageReactions, // Add this prop to handle reaction updates
 }: {
+  chatDetails: {
+    chatId: string;
+    chatType: string;
+  };
   user: User;
   message: APIMessage;
   replyToMessage: () => void;
   replyMessage?: APIMessage;
+  updateMessageReactions: (
+    messageId: string,
+    reactions: Record<string, number>,
+  ) => void; // Define the type for the new prop
 }) {
   const messageOwner = user.id === message.user.id; // This will not work until this branch is merged with feature/register
 
   // React to a message
-  const reactToMessage = (reaction: string) => {
-    throw new Error(`Not implemented: Reacting to a message with ${reaction}`);
+  const reactToMessage = async (reaction: string) => {
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chatId: chatDetails.chatId,
+          chatType: chatDetails.chatType,
+          reaction,
+          replyId: message.messageId,
+        }),
+      });
+
+      if (!response.ok) {
+        toast.error('Failed to react to message');
+      } else {
+        // Directly update the message reactions without using the response
+        updateMessageReactions(message.messageId, {
+          ...message.reactions,
+          [reaction]: (message.reactions[reaction] || 0) + 1,
+        });
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
   };
 
   return (
@@ -94,10 +130,7 @@ export default function ChatMessage({
                 <p>{message.message}</p>
               </div>
             </ContextMenuTrigger>
-            <ContextMenuContent
-              className="text-popover-foreground"
-              onSelect={console.log}
-            >
+            <ContextMenuContent className="text-popover-foreground">
               <ContextMenuLabel className="text-inherit">
                 {new Date(message.timestamp).toLocaleString()}
               </ContextMenuLabel>

@@ -1,26 +1,52 @@
 'use client';
 import { Chat, APIMessage } from '@/lib/types/chat';
-import { User } from 'next-auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { SidebarInset, SidebarTrigger } from '../ui/sidebar';
 import ChatBox from './ChatBox';
 import ChatMessage from './ChatMessage';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { PublicUser } from '@/lib/types/user';
 
 // Main inset section for chat content
 export default function ChatContent({
   user,
   selectedChat,
 }: {
-  user: User;
+  user: PublicUser;
   selectedChat: Chat | null;
 }) {
   const [replyMessage, setReplyMessage] = useState<APIMessage>();
+  const [chatMessages, setChatMessages] = useState<APIMessage[]>(
+    selectedChat?.messages || [],
+  );
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setChatMessages((prevMessages) => {
+      if (selectedChat?.messages !== prevMessages) {
+        return selectedChat?.messages || [];
+      }
+      return prevMessages;
+    });
+  }, [selectedChat]);
 
   const sendMessage = async (message: string, replyId?: string) => {
     const chatId = selectedChat?.chatId;
-    //const userId = user.id;
+    const chatType = selectedChat?.chatType;
+
+    const newMessage: APIMessage = {
+      messageId: `${Date.now()}`, // Generate a temporary ID
+      user,
+      message,
+      timestamp: new Date().getTime(),
+      reactions: {},
+      replyId,
+    };
+
+    // Immediately add the new message to the chatMessages state
+    setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+    setReplyMessage(undefined);
 
     try {
       const response = await fetch('/api/chat', {
@@ -30,7 +56,7 @@ export default function ChatContent({
         },
         body: JSON.stringify({
           chatId,
-          chatType: 'stop',
+          chatType,
           message,
           replyId,
         }),
@@ -44,10 +70,55 @@ export default function ChatContent({
     }
   };
 
-  // Scroll to the bottom of the chat
+  const updateMessageReactions = (
+    messageId: string,
+    reactions: Record<string, number>,
+  ) => {
+    setChatMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.messageId === messageId && msg.reactions !== reactions
+          ? { ...msg, reactions }
+          : msg,
+      ),
+    );
+  };
+
+  // Polling for new messages and reactions
   useEffect(() => {
-    window.scrollTo(0, document.body.scrollHeight);
+    const interval = setInterval(async () => {
+      if (selectedChat) {
+        try {
+          const response = await fetch(`/api/chat/${selectedChat.chatId}`);
+          if (response.ok) {
+            const updatedChat = await response.json();
+            setChatMessages((prevMessages) =>
+              updatedChat.messages.map((newMsg: APIMessage) => {
+                const existingMsg = prevMessages.find(
+                  (msg) => msg.messageId === newMsg.messageId,
+                );
+                return existingMsg && existingMsg.reactions !== newMsg.reactions
+                  ? { ...existingMsg, reactions: newMsg.reactions }
+                  : newMsg;
+              }),
+            );
+          }
+        } catch (error) {
+          console.error('Error fetching updated messages:', error);
+        }
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
   }, [selectedChat]);
+
+  // Scroll to the bottom of the chat
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages.length]);
 
   // Detect escape key to clear reply message
   useEffect(() => {
@@ -82,17 +153,20 @@ export default function ChatContent({
               replyMessage={replyMessage}
               closeReply={() => setReplyMessage(undefined)}
             />
-            {selectedChat.messages.map((message: APIMessage) => (
+            {chatMessages.map((message: APIMessage) => (
               <ChatMessage
                 key={message.messageId}
+                chatDetails={selectedChat}
                 user={user}
                 message={message}
                 replyToMessage={() => setReplyMessage(message)}
-                replyMessage={selectedChat.messages.find(
+                replyMessage={chatMessages.find(
                   (m) => m.messageId === message.replyId,
                 )}
+                updateMessageReactions={updateMessageReactions}
               />
             ))}
+            <div ref={chatEndRef} />
           </>
         ) : (
           <div className="flex flex-col gap-5 pt-20 opacity-75">

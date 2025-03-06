@@ -6,14 +6,14 @@ import { Loader2 } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { useSession } from 'next-auth/react';
 import { Chat } from '@/lib/types/chat';
-import { User } from '@/lib/types/user';
+import { PublicUser } from '@/lib/types/user';
 import ChatContent from '@/components/chat/ChatContent';
 
 // Main chat page
 export default function ChatPage() {
   // Check for sign in status and user
   const { data: session } = useSession();
-  const user = session?.user as User;
+  const user = session?.user as PublicUser;
 
   // If the user is not signed in, redirect to the sign in page
   useEffect(() => {
@@ -24,44 +24,6 @@ export default function ChatPage() {
   }, [session]);
 
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
-
-  const queryInterval = 2000; // 2 second
-
-  useEffect(() => {
-    const chatId = selectedChat ? selectedChat.chatId : 'test';
-
-    if (!chatId) return;
-
-    const fetchChats = async () => {
-      try {
-        const response = await fetch(`/api/chat/${chatId}`);
-        const newChat: Chat = await response.json();
-
-        const recentNewId =
-          newChat.messages[newChat.messages.length - 1].messageId;
-
-        const recentFetchedID = selectedChat
-          ? selectedChat.messages[selectedChat.messages.length - 1].messageId
-          : null;
-
-        // Only update fetchedChats if the most recent message ID is different
-        if (recentNewId !== recentFetchedID) {
-          setSelectedChat(newChat);
-        }
-
-        //        setSelectedChat(newChat);
-      } catch (error) {
-        console.log('Error fetching chat data:', error);
-      }
-    };
-
-    // Initial fetch
-    fetchChats();
-
-    const intervalId = setInterval(fetchChats, queryInterval);
-
-    return () => clearInterval(intervalId);
-  }, [selectedChat]);
 
   // If the session is not loaded, show a loading spinner
   if (!user) {

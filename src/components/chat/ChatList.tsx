@@ -11,22 +11,22 @@ import {
 import { useEffect, useState } from 'react';
 
 export default function ChatList({
-  chatIDs,
+  chats,
   selectedChat,
   setSelectedChat,
 }: {
-  chatIDs?: string[];
+  chats?: Chat[];
   selectedChat: Chat | null;
   setSelectedChat: (chat: Chat) => void;
 }) {
   const [activeChats, setActiveChats] = useState<Chat[]>([]);
 
   useEffect(() => {
-    if (chatIDs?.length === 0) return;
+    if (chats?.length === 0) return;
 
     const fetchChats = async () => {
       try {
-        if (!chatIDs) {
+        if (!chats) {
           const response = await fetch(`/api/chat/`);
           if (!response.ok) throw new Error('Failed to fetch chat');
           const userChats = await response.json();
@@ -34,8 +34,8 @@ export default function ChatList({
         } else {
           const updatedChats: Chat[] = [];
 
-          for (const chatID of chatIDs) {
-            const response = await fetch(`/api/chat/${chatID}`);
+          for (const chat of chats) {
+            const response = await fetch(`/api/chat/${chat.chatId}`);
             if (!response.ok) {
               const newRoomMessage: APIMessage = {
                 messageId: '0',
@@ -44,15 +44,15 @@ export default function ChatList({
                 user: {
                   id: '0',
                   name: 'System',
-                  image: 'https://randomuser.me/api/portraits',
+                  image: '',
                 },
                 reactions: {},
               };
 
               const newRoom: Chat = {
-                chatId: chatID,
-                chatType: 'stop',
-                messages: [newRoomMessage],
+                chatId: chat.chatId,
+                chatType: chat.chatType,
+                messages: [...chat.messages, newRoomMessage],
               };
               updatedChats.push(newRoom);
               setActiveChats(updatedChats);
@@ -74,10 +74,18 @@ export default function ChatList({
     };
 
     fetchChats();
-  }, [chatIDs]);
+  }, [chats]);
 
   return (
     <SidebarMenu>
+      {activeChats.length === 0 && (
+        <div className="mt-3 flex w-full flex-col items-center justify-between">
+          <h4 className="space-y-1 text-sm font-semibold">No active chats</h4>
+          <p className="text-foreground/75 space-y-1 text-xs">
+            Start a new chat to see it here
+          </p>
+        </div>
+      )}
       {activeChats.map((item) => (
         <div key={item.chatId}>
           <SidebarSeparator className="bg-accent -translate-x-2" />
@@ -98,14 +106,19 @@ export default function ChatList({
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-1">
-                  <div className="flex w-full justify-between">
+                  <div className="flex w-full flex-col justify-between">
                     <h4 className="space-y-1 text-sm font-semibold">
                       {item.chatId}
                     </h4>
-                    <span className="text-foreground/75 space-y-1 text-xs">
-                      {item.messages[item.messages.length - 1]?.message ||
+                    <p className="text-foreground/75 space-y-1 text-xs">
+                      {`${item.messages[
+                        item.messages.length - 1
+                      ]?.message.slice(
+                        0,
+                        25,
+                      )}${item.messages[item.messages.length - 1]?.message.length >= 25 ? '...' : ''}` ||
                         'No messages'}
-                    </span>
+                    </p>
                   </div>
                 </div>
               </div>
