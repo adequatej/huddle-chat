@@ -269,7 +269,6 @@ export function ChatSidebar({
         const vehicles = await vehicleResponse.json();
         const stops = await stopsResponse.json();
         vehicles.forEach((vehicle: MBTAVehicle) => {
-          console.log(vehicle.distance);
           if (
             vehicle.distance &&
             vehicle.distance < distanceThreshold + location.acc * 1.5
@@ -277,7 +276,7 @@ export function ChatSidebar({
             chats.push(vehicle.id);
         });
         stops.forEach((stop: MBTAVehicle) => {
-          console.log(stop.distance);
+          console.log(`${stop.attributes.label}  ${stop.distance}`);
           if (
             stop.distance &&
             stop.distance < distanceThreshold + location.acc * 1.5
