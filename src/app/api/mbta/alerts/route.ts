@@ -2,6 +2,7 @@ import { auth } from '@/app/auth';
 import requestMbta from '@/lib/mbta/request';
 import { getVehiclesSortedByDistance } from '@/lib/mbta/objectsByDistance';
 import { NextRequest, NextResponse } from 'next/server';
+import { User } from '@/lib/types/user';
 
 export async function GET(req: NextRequest) {
   // Get optional long, lat, and acc query parameters
@@ -14,6 +15,7 @@ export async function GET(req: NextRequest) {
   if (!session?.user || !session.user.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const user = session.user as User;
 
   let routeIds: string[] = [];
 
@@ -21,7 +23,7 @@ export async function GET(req: NextRequest) {
   if (lon !== null && lat !== null && acc !== null) {
     const vehicles = await requestMbta(
       `/vehicles?filter[route_type]=2&filter[revenue]=REVENUE`,
-      session.user,
+      user,
     );
 
     // Sort vehicles by distance
@@ -38,7 +40,7 @@ export async function GET(req: NextRequest) {
 
   // If no nearby vehicles or location, sends all alerts
   if (routeIds.length === 0) {
-    const alerts = await requestMbta(`/alerts`, session.user);
+    const alerts = await requestMbta(`/alerts`, user);
 
     return NextResponse.json(alerts);
   }
@@ -46,10 +48,7 @@ export async function GET(req: NextRequest) {
   // Fetch alerts for the identified routes
   const params = new URLSearchParams();
   params.append('filter[route]', routeIds.join(','));
-  const alerts = await requestMbta(
-    `/alerts?${params.toString()}`,
-    session.user,
-  );
+  const alerts = await requestMbta(`/alerts?${params.toString()}`, user);
 
   return NextResponse.json(alerts);
 }
