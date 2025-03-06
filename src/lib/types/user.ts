@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 export type UserPreferences = {
   notifications: boolean;
   onboarded?: boolean;
+  favoriteTrains?: string[];
 };
 
 export type User = {

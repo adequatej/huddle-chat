@@ -21,7 +21,7 @@ import Link from 'next/link';
 export function Header() {
   return (
     <header className="bg-accent fixed top-0 z-20 flex w-full items-center justify-between p-4">
-      <div className="flex items-center gap-4">
+      <Link href="/" className="flex items-center gap-4">
         <Image
           src="/logo.svg"
           alt="Huddle Chat"
@@ -32,7 +32,7 @@ export function Header() {
         <h1 className="hidden text-2xl font-bold tracking-tight sm:block">
           Huddle Chat
         </h1>
-      </div>
+      </Link>
       <div className="flex items-center gap-4">
         <AuthStatus />
         <nav>

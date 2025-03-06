@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
   // - route type is commuter rail
   // - latitude and longitude are set
   const nearestStops = await requestMbta(
-    `/stops?page[limit]=5&filter[latitude]=${lat}&filter[longitude]=${lon}`,
+    `/stops?page[limit]=5&filter[latitude]=${lat}&filter[longitude]=${lon}&filter[route_type]=2`,
     user,
   );
 

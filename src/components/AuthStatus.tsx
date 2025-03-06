@@ -17,7 +17,7 @@ function AvatarDropdown({ session }: { session: Session }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar className="size-9">
+        <Avatar className="size-7 sm:size-9">
           <AvatarImage src={session?.user?.image || ''} />
           <AvatarFallback>
             {session?.user?.name?.charAt(0).toUpperCase() || '?'}
@@ -28,7 +28,7 @@ function AvatarDropdown({ session }: { session: Session }) {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/preferences">Preferences</Link>
+          <Link href="/settings">Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuItem variant={'destructive'} onSelect={() => signOut()}>
           Sign Out
@@ -44,10 +44,10 @@ export default function AuthStatus() {
 
   if (session && session.user) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 sm:gap-2">
         <AvatarDropdown session={session} />
         <div className="flex flex-col">
-          <p>
+          <p className="text-xs sm:text-base">
             Hello, <b>{session.user.name}</b>
           </p>
         </div>
