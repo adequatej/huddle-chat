@@ -63,7 +63,8 @@ function AlertsPage() {
             placeholder="Search alerts..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="w-200 rounded-lg border border-gray-300 p-2"
+            //className="w-200 rounded-lg border border-gray-300 p-2"
+            className="right-0 left-0 z-10 max-w-3xl rounded-lg border border-gray-300 p-2 transition-all duration-200 ease-linear"
           />
         </div>
         <div className="flex-1 overflow-y-auto p-8">
@@ -71,22 +72,40 @@ function AlertsPage() {
             <p>No alerts match the search criteria.</p>
           ) : (
             <ul className="space-y-4">
-              {filteredAlerts.map((alert) => (
-                <li key={alert.id} className="rounded-lg border p-4 shadow">
-                  <h2 className="font-semibold">
-                    {alert.attributes.short_header || alert.attributes.header}
-                  </h2>
-                  <p className="text-gray-600">
-                    {alert.attributes.description}
-                  </p>
-                  <p className="text-sm text-red-500">
-                    {alert.attributes.service_effect}
-                  </p>
-                  <p className="text-gray-400">
-                    Last updated {alert.attributes.updated_at}
-                  </p>
-                </li>
-              ))}
+              {filteredAlerts
+                .sort((a, b) => {
+                  // order the list by date
+                  const date1 = new Date(a.attributes.updated_at);
+                  const date2 = new Date(b.attributes.updated_at);
+                  return date2.getTime() - date1.getTime();
+                })
+                .map((alert) => (
+                  <li key={alert.id} className="rounded-lg border p-4 shadow">
+                    <h2 className="font-semibold">
+                      {alert.attributes.short_header || alert.attributes.header}
+                    </h2>
+                    <p className="text-gray-600">
+                      {alert.attributes.description}
+                    </p>
+                    <p className="text-sm text-red-500">
+                      {alert.attributes.service_effect}
+                    </p>
+                    <p className="text-gray-400">
+                      Last updated{' '}
+                      {new Date(alert.attributes.updated_at).toLocaleDateString(
+                        'en-US',
+                        {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                          hour: 'numeric',
+                          minute: 'numeric',
+                          hour12: true,
+                        },
+                      )}
+                    </p>
+                  </li>
+                ))}
             </ul>
           )}
         </div>
