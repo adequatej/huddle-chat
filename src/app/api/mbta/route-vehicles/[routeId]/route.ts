@@ -1,6 +1,7 @@
 import { auth } from '@/app/auth';
 import requestMbta from '@/lib/mbta/request';
 import { MBTAAPIVehicle } from '@/lib/types/mbta';
+import { User } from '@/lib/types/user';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
@@ -12,6 +13,7 @@ export async function GET(
   if (!session?.user || !session.user.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const user = session.user as User;
 
   // Get routeId from path
   const { routeId } = await params;
@@ -20,7 +22,7 @@ export async function GET(
     // Get vehicles for the specified route
     const vehicles = (await requestMbta(
       `/vehicles?filter[route]=${routeId}&filter[revenue]=REVENUE`,
-      session.user,
+      user,
     )) as MBTAAPIVehicle[];
 
     return NextResponse.json(

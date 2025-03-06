@@ -1,6 +1,7 @@
 import { auth } from '@/app/auth';
 import requestMbta from '@/lib/mbta/request';
 import { MBTAAPIRoute } from '@/lib/types/mbta';
+import { User } from '@/lib/types/user';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -9,12 +10,13 @@ export async function GET() {
   if (!session?.user || !session.user.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const user = session.user as User;
 
   try {
     // Get commuter rail routes
     const routes = (await requestMbta(
       `/routes?filter[type]=2`,
-      session.user,
+      user,
     )) as MBTAAPIRoute[];
 
     return NextResponse.json(

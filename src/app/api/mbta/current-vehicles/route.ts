@@ -1,6 +1,7 @@
 import { auth } from '@/app/auth';
 import requestMbta from '@/lib/mbta/request';
 import { MBTAAPIVehicle } from '@/lib/types/mbta';
+import { User } from '@/lib/types/user';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -9,13 +10,14 @@ export async function GET() {
   if (!session?.user || !session.user.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const user = session.user as User;
 
   // Get current commuter rail vehicles
   // Filters:
   // - route type is commuter rail
   const vehicles = (await requestMbta(
     `/vehicles?filter[route_type]=2&filter[revenue]=REVENUE`,
-    session.user,
+    user,
   )) as MBTAAPIVehicle[];
 
   return NextResponse.json(
