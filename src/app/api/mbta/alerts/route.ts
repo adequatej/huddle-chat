@@ -9,6 +9,7 @@ export async function GET(req: NextRequest) {
   const lon = req.nextUrl.searchParams.get('lon');
   const lat = req.nextUrl.searchParams.get('lat');
   const acc = req.nextUrl.searchParams.get('acc');
+  const routeId = req.nextUrl.searchParams.get('route'); // Allow filtering for specific route
 
   // Authenticate user
   const session = await auth();
@@ -18,6 +19,11 @@ export async function GET(req: NextRequest) {
   const user = session.user as User;
 
   let routeIds: string[] = [];
+
+  if (routeId) {
+    routeIds = [routeId];
+  }
+  console.log('routeId', routeId);
 
   // If location parameters are provided, fetch the nearest vehicles
   if (lon !== null && lat !== null && acc !== null) {
@@ -38,17 +44,18 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // If no nearby vehicles or location, sends all alerts
-  if (routeIds.length === 0) {
-    const alerts = await requestMbta(`/alerts`, user);
-
-    return NextResponse.json(alerts);
-  }
+  // If no nearby vehicles or location, fetch all commuter rail alerts
 
   // Fetch alerts for the identified routes
-  const params = new URLSearchParams();
-  params.append('filter[route]', routeIds.join(','));
-  const alerts = await requestMbta(`/alerts?${params.toString()}`, user);
+  const queryParams = new URLSearchParams();
+  queryParams.append('filter[route_type]', '2'); // Default: Commuter Rail only!
+  if (routeIds.length > 0) {
+    queryParams.append('filter[route]', routeIds.join(','));
+  }
+
+  // Fetch alerts
+  const alerts = await requestMbta(`/alerts?${queryParams.toString()}`, user);
+  console.log(alerts);
 
   return NextResponse.json(alerts);
 }
