@@ -140,8 +140,16 @@ export async function GET(
     }),
   );
 
+  // Get train trip name
+  const tripId = vehicle.relationships?.trip.data.id;
+  const tripReq = await requestMbta(`/trips/${tripId}`);
+  const vehicleName = tripReq.attributes.name || vehicle.id;
+
   return NextResponse.json({
-    vehicle: vehicle.attributes,
+    vehicle: {
+      name: vehicleName,
+      ...vehicle.attributes,
+    },
     currentStatus: vehicle.attributes.current_status,
     currentStop: completeSchedule.find(
       (schedule) =>

@@ -24,6 +24,23 @@ export type MBTAVehicle = {
   attributes: MBTAVehicleAttributes;
   id: string;
   distance?: number; // Meters from user location
+  relationships?: {
+    route: {
+      data: {
+        id: string;
+      };
+    };
+    trip: {
+      data: {
+        id: string;
+      };
+    };
+    stop: {
+      data: {
+        id: string;
+      };
+    };
+  };
 };
 
 export type MBTAStopAttributes = {
@@ -103,6 +120,7 @@ export type MBTAAPIRoute = {
  */
 export interface VehicleData {
   id: string;
+  name: string;
   label: string;
   current_status: string;
   updated_at: string;
@@ -148,6 +166,7 @@ export interface Stop {
  */
 export interface Train {
   id: string;
+  name: string;
   trainNumber: string;
   destination: string;
   currentLocation: string;

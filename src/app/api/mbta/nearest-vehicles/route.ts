@@ -35,9 +35,18 @@ export async function GET(req: NextRequest) {
   );
 
   // Sort commuter trains by distance
-  const nearestCommuterTrains = await getVehiclesSortedByDistance(
-    currCommuterTrains,
-    { lat, lon, acc },
+  const nearestCommuterTrains = (
+    await getVehiclesSortedByDistance(currCommuterTrains, { lat, lon, acc })
+  ).splice(0, 5); // Limit to 5 closest trains
+
+  await Promise.all(
+    nearestCommuterTrains.map(async (train) => {
+      // Get train trip name
+      const tripId = train.relationships?.trip.data.id;
+      const tripReq = await requestMbta(`/trips/${tripId}`, user);
+      console.log('tripReq', tripReq);
+      train.id = tripReq.attributes.name || train.id;
+    }),
   );
 
   // Return the closest commuter trains, trimming unused data

@@ -280,6 +280,7 @@ export function TrainSchedule() {
         const transformedTrains: Train[] = data.map((vehicle: VehicleData) => ({
           id: vehicle.id,
           trainNumber: vehicle.label || 'Unknown',
+          name: vehicle.name || 'Unknown',
           destination: 'Loading...',
           currentLocation:
             vehicle.current_status === 'STOPPED_AT' ? 'At Station' : 'En Route',
@@ -648,7 +649,7 @@ export function TrainSchedule() {
               <div className="min-w-0">
                 <div className="flex items-center gap-1">
                   <h3 className="truncate text-xs font-bold sm:text-base">
-                    {isLoading ? 'Loading...' : `Train ${train.trainNumber}`}
+                    {isLoading ? 'Loading...' : `Train ${train.name}`}
                   </h3>
                   <Star
                     className={cn(
@@ -927,7 +928,7 @@ export function TrainSchedule() {
           <div className="ml-0 flex items-center gap-1 sm:ml-0 sm:gap-2">
             <ChevronLeft className="h-3 w-3 flex-shrink-0 sm:inline-block sm:h-4 sm:w-4" />
             <span className="text-primary font-bold">
-              Train {selectedTrain.trainNumber}
+              Train {selectedTrain.name}
             </span>
           </div>
         )}
@@ -1054,7 +1055,7 @@ export function TrainSchedule() {
                   <div className="flex min-w-0 items-center gap-1 sm:gap-2">
                     <TrainIcon className="h-4 w-4 flex-shrink-0 sm:h-5 sm:w-5" />
                     <h2 className="truncate text-base font-bold sm:text-xl">
-                      Train {selectedTrain.trainNumber}
+                      Train {selectedTrain.name}
                     </h2>
                   </div>
                   <Badge

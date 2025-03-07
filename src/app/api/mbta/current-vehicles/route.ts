@@ -18,11 +18,22 @@ export async function GET() {
   const vehicles = (await requestMbta(
     `/vehicles?filter[route_type]=2&filter[revenue]=REVENUE`,
     user,
-  )) as MBTAAPIVehicle[];
+  )) as (MBTAAPIVehicle & { name: string })[];
+
+  await Promise.all(
+    vehicles.map(async (train) => {
+      // Get train trip name
+      const tripId = train.relationships?.trip.data.id;
+      const tripReq = await requestMbta(`/trips/${tripId}`, user);
+      console.log('tripReq', tripReq);
+      train.name = tripReq.attributes.name || train.id;
+    }),
+  );
 
   return NextResponse.json(
     vehicles.map((vehicle) => ({
       id: vehicle.id,
+      name: vehicle.name,
       ...vehicle.attributes,
     })),
   );
