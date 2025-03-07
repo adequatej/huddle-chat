@@ -6,6 +6,7 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarRail,
+  SidebarSeparator,
 } from '@/components/ui/sidebar';
 import { History, MapPin } from 'lucide-react';
 import { Chat } from '@/lib/types/chat';
@@ -90,7 +91,7 @@ export function ChatSidebar({
   useEffect(() => {
     const interval = setInterval(() => {
       fetchLocation();
-    }, 6000);
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [fetchLocation]);
@@ -103,6 +104,7 @@ export function ChatSidebar({
             <MapPin />
             Current Locations
           </SidebarGroupLabel>
+          <SidebarSeparator className="-ml-0.5" />
           <SidebarGroupContent>
             {(!location || loading) && <LocationCard />}
             <ChatList
@@ -117,6 +119,7 @@ export function ChatSidebar({
             <History />
             Past Conversations
           </SidebarGroupLabel>
+          <SidebarSeparator className="-ml-0.5" />
           <SidebarGroupContent>
             <ChatList
               selectedChat={selectedChat}

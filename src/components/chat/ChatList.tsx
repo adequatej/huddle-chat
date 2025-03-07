@@ -2,12 +2,7 @@ import { APIMessage, Chat } from '@/lib/types/chat';
 import { cn } from '@/lib/utils';
 import { TrainFront, Octagon } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
-import {
-  SidebarMenu,
-  SidebarSeparator,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from '../ui/sidebar';
+import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '../ui/sidebar';
 import { useEffect, useState } from 'react';
 
 export default function ChatList({
@@ -82,13 +77,16 @@ export default function ChatList({
       )}
       {activeChats.map((item) => (
         <div key={item.chatId}>
-          <SidebarSeparator className="bg-accent -translate-x-2" />
-          <SidebarMenuItem key={item.chatId} className="mt-1 h-18 min-h-16">
+          {/* <SidebarSeparator className="bg-accent -translate-x-2" /> */}
+          <SidebarMenuItem
+            key={item.chatId}
+            className="mt-1 h-18 min-h-16 rounded-lg"
+          >
             <SidebarMenuButton
               asChild
               className={cn(
-                'h-18 min-h-16',
-                selectedChat?.chatId === item.chatId ? 'bg-accent' : '',
+                'bg-accent/20 hover:bg-accent/65 h-18 min-h-16',
+                selectedChat?.chatId === item.chatId ? 'bg-accent/50' : '',
               )}
               onClick={() => setSelectedChat(item)}
             >

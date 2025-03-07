@@ -123,7 +123,9 @@ export default function ChatMessage({
               <div
                 className={cn(
                   'bg-accent max-w-lg min-w-32 rounded-md p-2 break-words',
-                  messageOwner ? 'text-right' : 'text-left',
+                  messageOwner
+                    ? 'bg-secondary text-secondary-foreground text-right'
+                    : 'text-left',
                 )}
               >
                 <p className="text-md font-bold">{message.user.name}</p>

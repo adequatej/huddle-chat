@@ -6,8 +6,9 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Bell, BellOff } from 'lucide-react';
+import { Bell, BellOff, SunMoon } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
+import { ThemeSwitcher } from './ThemeSwitcher';
 
 type PreferencesFormProps = {
   initialPreferences: UserPreferences;
@@ -52,6 +53,24 @@ export default function PreferencesForm({
       <Separator className="my-6" />
 
       <div className="space-y-6">
+        {/* Theme */}
+        <div className="bg-card hover:bg-accent/5 rounded-lg border p-4 transition-colors">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="bg-primary/10 text-primary rounded-full p-2">
+                <SunMoon className="size-4" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-base font-medium">Theme Toggle</Label>
+                <p className="text-muted-foreground text-sm">
+                  Switch between light and dark themes.
+                </p>
+              </div>
+            </div>
+            <ThemeSwitcher />
+          </div>
+        </div>
+        {/* Notifications */}
         <div className="bg-card hover:bg-accent/5 rounded-lg border p-4 transition-colors">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
