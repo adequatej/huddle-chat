@@ -44,7 +44,6 @@ export async function GET(req: NextRequest) {
       // Get train trip name
       const tripId = train.relationships?.trip.data.id;
       const tripReq = await requestMbta(`/trips/${tripId}`, user);
-      console.log('tripReq', tripReq);
       train.id = tripReq.attributes.name || train.id;
     }),
   );

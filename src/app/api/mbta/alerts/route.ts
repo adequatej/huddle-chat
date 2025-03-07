@@ -23,7 +23,6 @@ export async function GET(req: NextRequest) {
   if (routeId) {
     routeIds = [routeId];
   }
-  console.log('routeId', routeId);
 
   // If location parameters are provided, fetch the nearest vehicles
   if (lon !== null && lat !== null && acc !== null) {

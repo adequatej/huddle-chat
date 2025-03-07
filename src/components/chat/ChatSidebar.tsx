@@ -66,8 +66,6 @@ export function ChatSidebar({
           },
         );
 
-        console.log('TESTING', chats);
-
         setNearbyChats(chats);
       } catch {
         console.log('Error fetching location');
