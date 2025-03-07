@@ -54,8 +54,16 @@ export async function GET(req: NextRequest) {
   }
 
   // Fetch alerts
+  // Fetch alerts
   const alerts = await requestMbta(`/alerts?${queryParams.toString()}`, user);
-  console.log(alerts);
 
-  return NextResponse.json(alerts);
+  // 🔥 Filter alerts: Only include DELAYS or SERVICE CHANGES
+  const delayAlerts = alerts.filter(
+    (alert: { attributes: { effect: string } }) =>
+      ['DELAY', 'SERVICE_CHANGE', 'TRACK CHANGE'].includes(
+        alert.attributes.effect,
+      ),
+  );
+
+  return NextResponse.json(delayAlerts);
 }
