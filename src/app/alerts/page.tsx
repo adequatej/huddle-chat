@@ -23,9 +23,23 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { PublicUser } from '@/lib/types/user';
 
 function AlertsPage() {
+  // Check for sign in status and user
+  const { data: session } = useSession();
+  const user = session?.user as PublicUser;
+
+  // If the user is not signed in, redirect to the sign in page
+  useEffect(() => {
+    if (session === null) {
+      window.location.href = '/signin';
+      return;
+    }
+  }, [session]);
+
   const [alerts, setAlerts] = useState<MBTAAlert[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filter, setFilter] = useState<string>('');
@@ -49,6 +63,16 @@ function AlertsPage() {
 
     fetchAlerts();
   }, []);
+
+  // If the session is not loaded, show a loading spinner
+  if (!user) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Header />
+        <Loader2 className="size-16 animate-spin" />
+      </div>
+    );
+  }
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);

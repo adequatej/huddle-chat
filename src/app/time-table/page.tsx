@@ -1,6 +1,8 @@
 import { TrainSchedule } from '@/components/TrainSchedule';
 import { Header } from '@/components/Header';
 import type { Metadata } from 'next';
+import { auth } from '../auth';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Huddle Chat - Time Table',
@@ -13,7 +15,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TimeTablePage() {
+export default async function TimeTablePage() {
+  const session = await auth();
+  if (!session?.user?.email) redirect('/signin');
   return (
     <>
       <Header />
