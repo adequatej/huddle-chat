@@ -59,9 +59,13 @@ export async function GET(req: NextRequest) {
   // Filter alerts: Only include DELAYS or SERVICE CHANGES
   const delayAlerts = alerts.filter(
     (alert: { attributes: { effect: string } }) =>
-      ['DELAY', 'SERVICE_CHANGE', 'TRACK CHANGE'].includes(
-        alert.attributes.effect,
-      ),
+      [
+        'DELAY',
+        'SERVICE_CHANGE',
+        'TRACK_CHANGE',
+        'STATION_ISSUE',
+        'STATION_CLOSURE',
+      ].includes(alert.attributes.effect),
   );
 
   return NextResponse.json(delayAlerts);

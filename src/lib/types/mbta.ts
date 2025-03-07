@@ -193,7 +193,7 @@ export type MBTAAlert = {
     image_alternative_text: string;
     image: string;
     header: string;
-    effect_name: string;
+    effect: string;
     description: string;
     created_at: string;
     cause: string;
