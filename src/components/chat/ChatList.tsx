@@ -75,8 +75,8 @@ export default function ChatList({
       {activeChats.length === 0 && (
         <div className="mt-3 flex w-full flex-col items-center justify-between">
           <h4 className="space-y-1 text-sm font-semibold">No active chats</h4>
-          <p className="text-foreground/75 space-y-1 text-xs">
-            Start a new chat to see it here
+          <p className="text-foreground/75 space-y-1 px-15 text-center text-xs">
+            Looks like there aren&apos;t any chat rooms available.
           </p>
         </div>
       )}

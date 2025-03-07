@@ -122,7 +122,7 @@ export default function ChatMessage({
             <ContextMenuTrigger>
               <div
                 className={cn(
-                  'bg-accent max-w-lg rounded-md p-2 break-words',
+                  'bg-accent max-w-lg min-w-32 rounded-md p-2 break-words',
                   messageOwner ? 'text-right' : 'text-left',
                 )}
               >

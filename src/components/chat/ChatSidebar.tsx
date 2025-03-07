@@ -24,7 +24,7 @@ export function ChatSidebar({
   // const [searchQuery, setSearchQuery] = useState('');
   const [nearbyChats, setNearbyChats] = useState<Chat[]>([]);
 
-  const { location, loading } = useLocation();
+  const { location, loading, fetch: fetchLocation } = useLocation();
 
   const distanceThreshold = 1500; // 1.5 km
 
@@ -66,7 +66,16 @@ export function ChatSidebar({
           },
         );
 
-        setNearbyChats(chats);
+        setNearbyChats((prev) => {
+          // Check if the chats are the same
+          if (
+            prev.length === chats.length &&
+            prev.every((chat, index) => chat.chatId === chats[index].chatId)
+          ) {
+            return prev;
+          }
+          return chats;
+        });
       } catch {
         console.log('Error fetching location');
       }
@@ -76,6 +85,15 @@ export function ChatSidebar({
       getChatRooms();
     }
   }, [location]);
+
+  // Get location every minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchLocation();
+    }, 6000);
+
+    return () => clearInterval(interval);
+  }, [fetchLocation]);
 
   return (
     <Sidebar className="bg-sidebar-accent">
