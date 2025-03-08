@@ -53,6 +53,16 @@ export type MBTAStopAttributes = {
   wheelchair_boarding?: number;
 };
 
+export type MBTAAPIStop = {
+  relationships: {
+    route: { data: { id: string } };
+    trip: { data: { id: string } };
+    stop: { data: { id: string } };
+  };
+  id: string;
+  attributes: MBTAStopAttributes;
+};
+
 export type MBTAAPISchedule = {
   attributes: {
     arrival_time: string | null;

@@ -3,6 +3,7 @@ import requestMbta from '@/lib/mbta/request';
 import { getStopsSortedByDistance } from '@/lib/mbta/objectsByDistance';
 import { NextRequest, NextResponse } from 'next/server';
 import { User } from '@/lib/types/user';
+import { MBTAAPIStop } from '@/lib/types/mbta';
 
 export async function GET(req: NextRequest) {
   // Get long, lat, and acc query parameters
@@ -44,8 +45,18 @@ export async function GET(req: NextRequest) {
     user,
   );
 
+  // Filter out duplicate stops
+  const seenStops = new Set();
+  const uniqueStops = nearestStops.filter((stop: MBTAAPIStop) => {
+    if (seenStops.has(stop.attributes.name)) {
+      return false;
+    }
+    seenStops.add(stop.attributes.name);
+    return true;
+  });
+
   // Sort commuter trains by distance
-  const sortedStops = await getStopsSortedByDistance(nearestStops, {
+  const sortedStops = await getStopsSortedByDistance(uniqueStops, {
     lat,
     lon,
     acc,
@@ -53,10 +64,10 @@ export async function GET(req: NextRequest) {
 
   // Return the closest commuter trains, trimming unused data
   return NextResponse.json(
-    sortedStops.map((train) => ({
-      id: train.id,
-      distance: train.distance,
-      attributes: train.attributes,
+    sortedStops.map((stop) => ({
+      id: stop.id,
+      distance: stop.distance,
+      attributes: stop.attributes,
     })),
   );
 }
