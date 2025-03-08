@@ -25,9 +25,14 @@ export async function GET(req: NextRequest) {
   }
   const user = session.user as User;
 
-  const errorMultiplier = 10;
+  const errorMultiplier = 5;
+  const minRadius = 0.01; // Half a mile minimum radius
+
   // Convert accuracy radius to degrees according to MBTA calculations
-  const degrees = (acc * errorMultiplier * (0.02 / 1609.34)).toFixed(4);
+  const degrees = (
+    acc * errorMultiplier * (0.02 / 1609.34) +
+    minRadius
+  ).toFixed(4);
 
   // Get current commuter trains
   // Filters:
