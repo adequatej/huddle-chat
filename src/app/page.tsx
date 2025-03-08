@@ -51,7 +51,7 @@ export default async function Home() {
       <Header />
       {/* Desktop landing */}
       <section className="relative hidden md:block">
-        <div className="bg-secondary text-secondary-foreground group mt-10 hidden h-[600px] w-1/2 max-w-2xl rounded-tr-[40%] rounded-br-[40%] px-10 md:flex md:flex-col md:items-start md:justify-center">
+        <div className="motion-safe:animate-slide-in bg-secondary text-secondary-foreground group mt-10 hidden h-[600px] w-1/2 max-w-2xl rounded-tr-[40%] rounded-br-[40%] px-10 md:flex md:flex-col md:items-start md:justify-center">
           <div className="relative">
             <Image
               src="/logo.svg"
@@ -95,7 +95,7 @@ export default async function Home() {
           )}
         </div>
         <Image
-          src="/insideTrain.jpg"
+          src="/insideTrain.webp"
           alt="Inside a train"
           layout="fill"
           objectFit="cover"
